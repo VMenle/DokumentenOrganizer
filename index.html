@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DokumentenOrganizer</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c1219;
+  --surface: #131c27;
+  --surface2: #1a2535;
+  --surface3: #213045;
+  --border: #2a3d55;
+  --border2: #344d6a;
+  --accent: #38bdf8;
+  --accent2: #34d399;
+  --warn: #fbbf24;
+  --danger: #f87171;
+  --text: #e2eaf4;
+  --text2: #8ba4c0;
+  --text3: #4d6a88;
+  --mono: 'DM Mono', monospace;
+  --body: 'Outfit', sans-serif;
+  --serif: 'Instrument Serif', serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14px;min-height:100vh;}
+
+/* ── TOAST ── */
+#toastWrap{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;opacity:0;transform:translateX(20px);transition:all .25s;max-width:360px;line-height:1.5;}
+.toast.show{opacity:1;transform:translateX(0);}
+.t-ok{background:#052e16;border:1px solid #166534;color:#86efac;}
+.t-err{background:#2d0707;border:1px solid #991b1b;color:#fca5a5;}
+.t-warn{background:#2d1a00;border:1px solid #92400e;color:#fcd34d;}
+.t-info{background:#0c1f3a;border:1px solid #1e4d8c;color:#93c5fd;}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;}
+
+/* ── LICENSE SCREEN ── */
+#licenseScreen{align-items:center;justify-content:center;background:radial-gradient(ellipse at 30% 50%, #0f2040 0%, var(--bg) 60%);}
+.license-box{width:440px;max-width:94vw;text-align:center;}
+.license-logo{font-family:var(--serif);font-size:42px;color:var(--text);margin-bottom:6px;letter-spacing:-1px;}
+.license-logo span{color:var(--accent);}
+.license-sub{color:var(--text3);font-size:13px;margin-bottom:48px;letter-spacing:.04em;}
+.license-label{font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;text-align:left;margin-bottom:6px;}
+.license-input{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;color:var(--text);font-family:var(--mono);font-size:15px;letter-spacing:.08em;outline:none;text-align:center;transition:border-color .2s;}
+.license-input:focus{border-color:var(--accent);}
+.license-btn{width:100%;margin-top:12px;padding:14px;background:var(--accent);color:#0c1219;border:none;border-radius:10px;font-family:var(--body);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.02em;}
+.license-btn:hover{background:#7dd3fc;}
+.license-btn:disabled{opacity:.4;cursor:not-allowed;}
+.license-info{margin-top:20px;font-size:12px;color:var(--text3);line-height:1.6;}
+.license-status{margin-top:14px;font-size:12px;padding:10px 14px;border-radius:8px;display:none;}
+.license-status.err{display:block;background:#2d0707;border:1px solid #991b1b;color:#fca5a5;}
+.license-status.ok{display:block;background:#052e16;border:1px solid #166534;color:#86efac;}
+
+/* ── SETUP SCREEN ── */
+#setupScreen{align-items:center;justify-content:center;background:radial-gradient(ellipse at 70% 30%, #0f2a1a 0%, var(--bg) 60%);}
+.setup-box{width:500px;max-width:94vw;}
+.setup-title{font-family:var(--serif);font-size:28px;margin-bottom:4px;}
+.setup-title span{color:var(--accent2);}
+.setup-sub{color:var(--text3);font-size:13px;margin-bottom:36px;}
+.setup-steps{display:flex;flex-direction:column;gap:16px;}
+.setup-step{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--surface3);border-radius:50%;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:10px;}
+.step-title{font-weight:600;font-size:14px;margin-bottom:4px;}
+.step-desc{font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5;}
+.step-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border-color .15s;}
+.step-input:focus{border-color:var(--accent);}
+.step-btn{margin-top:10px;padding:9px 18px;background:var(--surface3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:var(--body);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:8px;}
+.step-btn:hover{background:var(--surface2);border-color:var(--accent);color:var(--accent);}
+.step-btn.done{border-color:var(--accent2);color:var(--accent2);}
+.step-status{margin-top:8px;font-size:12px;color:var(--text3);font-family:var(--mono);}
+.step-status.ok{color:var(--accent2);}
+.step-status.err{color:var(--danger);}
+.setup-continue{width:100%;margin-top:24px;padding:14px;background:var(--accent2);color:#0c1219;border:none;border-radius:10px;font-family:var(--body);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
+.setup-continue:hover{background:#6ee7b7;}
+.setup-continue:disabled{opacity:.35;cursor:not-allowed;}
+
+/* ── MAIN APP ── */
+#mainScreen{flex-direction:column;}
+.app-header{border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:58px;flex-shrink:0;background:var(--surface);}
+.app-logo{font-family:var(--serif);font-size:20px;letter-spacing:-.3px;}
+.app-logo span{color:var(--accent);}
+.header-right{display:flex;align-items:center;gap:14px;}
+.status-pill{display:flex;align-items:center;gap:6px;padding:5px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:100px;font-size:12px;color:var(--text2);}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);}
+.status-dot.ok{background:var(--accent2);}
+.status-dot.warn{background:var(--warn);animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.app-body{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:210px;border-right:1px solid var(--border);padding:18px 10px;display:flex;flex-direction:column;gap:2px;flex-shrink:0;background:var(--surface);overflow-y:auto;}
+.nav-btn{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+.nav-btn:hover{background:var(--surface2);color:var(--text);}
+.nav-btn.active{background:rgba(56,189,248,.1);color:var(--accent);font-weight:600;}
+.nav-icon{font-size:15px;width:18px;text-align:center;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:var(--warn);color:#0c1219;padding:1px 7px;border-radius:100px;font-size:10px;font-weight:700;}
+
+.main-content{flex:1;overflow-y:auto;padding:28px 32px;}
+.page{display:none;}
+.page.active{display:block;animation:fadeUp .2s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.page-hd{margin-bottom:22px;}
+.page-hd h1{font-size:21px;font-weight:700;margin-bottom:3px;}
+.page-hd p{color:var(--text2);font-size:13px;}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:14px;}
+.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;}
+.card-title{font-weight:600;font-size:14px;}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-family:var(--body);font-size:13px;font-weight:600;transition:all .15s;white-space:nowrap;}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+.btn-primary{background:var(--accent);color:#0c1219;}
+.btn-primary:hover:not(:disabled){background:#7dd3fc;}
+.btn-success{background:var(--accent2);color:#0c1219;}
+.btn-success:hover:not(:disabled){background:#6ee7b7;}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.btn-ghost:hover:not(:disabled){border-color:var(--text2);color:var(--text);}
+.btn-danger{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:var(--danger);}
+.btn-danger:hover:not(:disabled){background:rgba(248,113,113,.2);}
+.btn-warn{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:var(--warn);}
+.btn-sm{padding:5px 12px;font-size:12px;}
+
+/* ── FORMS ── */
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.fg label{font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--text3);text-transform:uppercase;}
+.fg input,.fg select{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border-color .15s;width:100%;}
+.fg input:focus,.fg select:focus{border-color:var(--accent);}
+.fg .hint{font-size:11px;color:var(--text3);font-family:var(--mono);}
+.fg .hint.ok{color:var(--accent2);}
+.fg .hint.err{color:var(--danger);}
+
+/* ── RUN PANEL ── */
+.run-panel{background:linear-gradient(135deg,rgba(56,189,248,.08),rgba(52,211,153,.06));border:1px solid rgba(56,189,248,.2);border-radius:12px;padding:20px 22px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.run-info h3{font-size:15px;font-weight:600;margin-bottom:3px;}
+.run-info p{font-size:12px;color:var(--text3);line-height:1.5;}
+.run-actions{display:flex;gap:10px;flex-shrink:0;}
+
+/* ── PROGRESS ── */
+.progress-bar-wrap{background:var(--surface3);border-radius:100px;height:6px;margin-top:10px;overflow:hidden;display:none;}
+.progress-bar-wrap.show{display:block;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:100px;transition:width .3s;}
+
+/* ── QUEUE CARD ── */
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:10px;}
+.q-card-name{font-family:var(--mono);font-size:12px;color:var(--accent);word-break:break-all;margin-bottom:6px;}
+.q-card-reason{font-size:12px;color:var(--warn);margin-bottom:8px;line-height:1.5;}
+.q-card-meta{font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:10px;}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:opacity .2s;}
+.overlay.active{opacity:1;pointer-events:all;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:28px 30px;width:580px;max-width:96vw;max-height:90vh;overflow-y:auto;}
+.modal-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);color:var(--warn);padding:3px 12px;border-radius:100px;font-size:10px;font-family:var(--mono);font-weight:500;letter-spacing:.06em;margin-bottom:12px;}
+.modal-badge::before{content:'●';}
+.modal h2{font-size:18px;font-weight:700;margin-bottom:3px;}
+.modal .msub{color:var(--text2);font-size:12px;margin-bottom:18px;font-family:var(--mono);word-break:break-all;}
+.gemini-hint{background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:10px;padding:12px 16px;margin-bottom:16px;}
+.gh-title{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.gh-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.gh-field{display:flex;flex-direction:column;gap:2px;}
+.gh-label{font-size:10px;color:var(--text3);font-family:var(--mono);}
+.gh-value{font-size:12px;color:var(--text2);font-family:var(--mono);}
+.gh-value.none{color:var(--text3);font-style:italic;}
+.reason-box{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--warn);margin-bottom:16px;line-height:1.5;}
+.divider{border:none;border-top:1px solid var(--border);margin:16px 0;}
+.section-lbl{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.form-full{grid-column:1/-1;}
+.preview-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-top:14px;margin-bottom:4px;}
+.preview-bar{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--mono);font-size:12px;color:var(--accent2);word-break:break-all;line-height:1.5;}
+.preview-bar.dim{color:var(--text3);}
+.cb-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;margin-bottom:4px;}
+.cb-row input[type=checkbox]{width:14px;height:14px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
+.cb-row span{font-size:13px;color:var(--text2);}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;}
+
+/* ── KAT ── */
+.kat-list{display:flex;flex-direction:column;gap:8px;}
+.kat-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;}
+.kat-name{font-weight:600;font-size:13px;flex:1;}
+.kat-folder{font-family:var(--mono);font-size:11px;color:var(--text3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.add-kat-form{display:grid;grid-template-columns:1fr auto;gap:8px;padding:12px;background:var(--bg);border:1px dashed var(--border);border-radius:10px;margin-top:8px;align-items:end;}
+
+/* ── LOG TABLE ── */
+.log-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;}
+.log-table th{text-align:left;padding:7px 12px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);font-family:var(--body);}
+.log-table td{padding:9px 12px;border-bottom:1px solid rgba(42,61,85,.4);vertical-align:middle;}
+.log-table tr:last-child td{border-bottom:none;}
+.log-table tr:hover td{background:rgba(26,37,53,.6);}
+.tag{display:inline-flex;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;font-family:var(--body);}
+.tag-auto{background:rgba(52,211,153,.12);color:var(--accent2);}
+.tag-manual{background:rgba(56,189,248,.12);color:var(--accent);}
+
+/* ── MISC ── */
+.empty{text-align:center;padding:40px;color:var(--text3);font-size:13px;}
+.loading{text-align:center;padding:40px;color:var(--text3);}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:8px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.info-box{background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--text2);line-height:1.6;}
+.warn-box{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--warn);line-height:1.6;}
+
+/* ── LICENSE INFO ── */
+.lic-info{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:12px;font-family:var(--mono);}
+.lic-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);}
+.lic-row:last-child{border-bottom:none;}
+.lic-key{color:var(--text3);}
+.lic-val{color:var(--text);}
+
+@media(max-width:680px){
+  .form-grid,.gh-grid{grid-template-columns:1fr;}
+  .sidebar{width:170px;}
+  .main-content{padding:16px;}
+  .run-panel{flex-direction:column;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+
+<div id="toastWrap"></div>
+
+<!-- ══ LICENSE SCREEN ══ -->
+<div class="screen active" id="licenseScreen">
+  <div class="license-box">
+    <div class="license-logo">Dokument<span>Organizer</span></div>
+    <div class="license-sub">KI-gestützte Dokumentenverwaltung</div>
+    <div class="license-label">Lizenznummer eingeben</div>
+    <input class="license-input" id="licInput" type="text" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="24" autocomplete="off" spellcheck="false">
+    <button class="license-btn" id="licBtn" onclick="checkLicense()">Aktivieren</button>
+    <div class="license-status" id="licStatus"></div>
+    <div class="license-info">
+      Deine Dokumente verlassen niemals dein Gerät.<br>
+      Nur der Gemini-API-Call geht an Google.
+    </div>
+  </div>
+</div>
+
+<!-- ══ SETUP SCREEN ══ -->
+<div class="screen" id="setupScreen">
+  <div class="setup-box">
+    <div class="setup-title">Einrichtung <span>abschließen</span></div>
+    <div class="setup-sub">Einmalig – dauert 2 Minuten</div>
+    <div class="setup-steps">
+
+      <div class="setup-step">
+        <div class="step-num">1</div>
+        <div class="step-title">Gemini API Key</div>
+        <div class="step-desc">Kostenlos unter <strong>aistudio.google.com/app/apikey</strong> erstellen. Wird nur lokal auf deinem Gerät gespeichert.</div>
+        <input class="step-input" id="setupApiKey" type="password" placeholder="AIza...">
+        <button class="step-btn" id="saveKeyBtn" onclick="setupSaveApiKey()">🔑 Key speichern</button>
+        <div class="step-status" id="keyStatus"></div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-num">2</div>
+        <div class="step-title">Arbeitsordner auswählen</div>
+        <div class="step-desc">Wähle einen Ordner auf deinem Gerät. Darin werden automatisch alle Kategorieordner und der Eingangsordner angelegt.</div>
+        <button class="step-btn" id="selectFolderBtn" onclick="setupSelectFolder()">📁 Ordner auswählen</button>
+        <div class="step-status" id="folderStatus"></div>
+      </div>
+
+    </div>
+    <button class="setup-continue" id="setupContinueBtn" onclick="finishSetup()" disabled>Weiter zur App →</button>
+  </div>
+</div>
+
+<!-- ══ MAIN APP ══ -->
+<div class="screen" id="mainScreen">
+
+  <!-- MODAL -->
+  <div class="overlay" id="queueOverlay">
+    <div class="modal">
+      <div class="modal-badge">Entscheidung erforderlich</div>
+      <h2>Manuell zuordnen</h2>
+      <p class="msub" id="m-filename">—</p>
+      <div class="gemini-hint">
+        <div class="gh-title">🤖 Gemini-Vorschlag</div>
+        <div class="gh-grid">
+          <div class="gh-field"><span class="gh-label">Kategorie</span><span class="gh-value" id="gv-kat">—</span></div>
+          <div class="gh-field"><span class="gh-label">Art</span><span class="gh-value" id="gv-art">—</span></div>
+          <div class="gh-field"><span class="gh-label">Dokumenttyp</span><span class="gh-value" id="gv-typ">—</span></div>
+          <div class="gh-field"><span class="gh-label">Person</span><span class="gh-value" id="gv-person">—</span></div>
+        </div>
+      </div>
+      <div class="reason-box" id="m-reason">—</div>
+      <hr class="divider">
+      <div class="section-lbl">Deine Zuordnung</div>
+      <div class="form-grid">
+        <div class="fg form-full">
+          <label>Kategorie *</label>
+          <select id="m-kat" onchange="updatePreview()"><option value="">– wählen –</option></select>
+        </div>
+        <div class="fg"><label>Art</label><input type="text" id="m-art" placeholder="z.B. KFZ, Strom" oninput="updatePreview()"></div>
+        <div class="fg"><label>Dokumenttyp</label><input type="text" id="m-typ" placeholder="z.B. Rechnung, Vertrag" oninput="updatePreview()"></div>
+        <div class="fg"><label>Person / Firma</label><input type="text" id="m-person" placeholder="optional" oninput="updatePreview()"></div>
+        <div class="fg"><label>Belegdatum (YYYYMMDD)</label><input type="text" id="m-datum" placeholder="leer = heute" maxlength="8" oninput="updatePreview()"></div>
+      </div>
+      <div class="preview-lbl">Vorschau Dateiname</div>
+      <div class="preview-bar dim" id="m-preview">– bitte Kategorie wählen –</div>
+      <hr class="divider">
+      <div class="cb-row"><input type="checkbox" id="m-steuer"><span>Steuerlich relevant → Kopie in Steuer-Ordner</span></div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="skipModal()">Überspringen</button>
+        <button class="btn btn-success" id="resolveBtn" onclick="resolveItem()" disabled>✓ Ablegen</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-header">
+    <div class="app-logo">Dokument<span>Organizer</span></div>
+    <div class="header-right">
+      <div class="status-pill"><div class="status-dot ok" id="appStatusDot"></div><span id="appStatusText">Bereit</span></div>
+      <button class="btn btn-ghost btn-sm" onclick="openFolder()" title="Ordner neu verbinden">📁</button>
+    </div>
+  </div>
+
+  <div class="app-body">
+    <div class="sidebar">
+      <button class="nav-btn active" onclick="showPage('queue',this)"><span class="nav-icon">⚠️</span>Warteschlange<span class="nav-badge" id="qBadge" style="display:none">0</span></button>
+      <button class="nav-btn" onclick="showPage('kategorien',this)"><span class="nav-icon">🗂</span>Kategorien</button>
+      <button class="nav-btn" onclick="showPage('log',this)"><span class="nav-icon">📋</span>Protokoll</button>
+      <button class="nav-btn" onclick="showPage('einstellungen',this)"><span class="nav-icon">⚙️</span>Einstellungen</button>
+    </div>
+
+    <div class="main-content">
+
+      <!-- QUEUE PAGE -->
+      <div class="page active" id="page-queue">
+        <div class="run-panel">
+          <div class="run-info">
+            <h3>Dokumente verarbeiten</h3>
+            <p id="runInfo">Neue Dateien im Eingangsordner werden analysiert, umbenannt und verschoben.</p>
+            <div class="progress-bar-wrap" id="progressWrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+          </div>
+          <div class="run-actions">
+            <button class="btn btn-primary" id="runBtn" onclick="runProcess(this)">▶ Jetzt starten</button>
+          </div>
+        </div>
+        <div class="page-hd"><h1>Warteschlange</h1><p>Dokumente die manuell zugeordnet werden müssen</p></div>
+        <div id="queueContent"><div class="empty">✅ Keine offenen Dokumente</div></div>
+      </div>
+
+      <!-- KATEGORIEN PAGE -->
+      <div class="page" id="page-kategorien">
+        <div class="page-hd"><h1>Kategorien</h1><p>Nur du legst Kategorien an – Gemini ordnet nur bekannten Kategorien zu</p></div>
+        <div class="warn-box">⚠️ Kategorien werden als Unterordner in deinem Arbeitsordner angelegt. Bitte keine Ordner manuell umbenennen oder löschen.</div>
+        <div class="card">
+          <div class="card-hd"><span class="card-title">Aktive Kategorien</span><button class="btn btn-primary btn-sm" onclick="toggleAddKat()">+ Hinzufügen</button></div>
+          <div class="kat-list" id="katList"><div class="empty">Noch keine Kategorien</div></div>
+          <div class="add-kat-form" id="addKatForm" style="display:none;">
+            <div class="fg" style="margin:0;"><label>Kategoriename</label><input type="text" id="newKatName" placeholder="z.B. Rente, Fahrtenbuch"></div>
+            <button class="btn btn-success" style="margin-top:20px;" onclick="addKategorie()">OK</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOG PAGE -->
+      <div class="page" id="page-log">
+        <div class="page-hd"><h1>Protokoll</h1><p>Letzte 200 verarbeiteten Dokumente</p></div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <table class="log-table">
+            <thead><tr><th>Datum</th><th>Originalname</th><th>Neuer Name</th><th>Kategorie</th><th>Konfidenz</th><th>Typ</th></tr></thead>
+            <tbody id="logBody"><tr><td colspan="6"><div class="empty">Noch keine Einträge</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- EINSTELLUNGEN PAGE -->
+      <div class="page" id="page-einstellungen">
+        <div class="page-hd"><h1>Einstellungen</h1><p>Konfiguration und Lizenzinfo</p></div>
+
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px;">Arbeitsordner</div>
+          <div class="info-box" id="folderInfo">Kein Ordner verbunden</div>
+          <button class="btn btn-ghost" onclick="openFolder()">📁 Ordner neu verbinden</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px;">Gemini API Key</div>
+          <div class="fg"><label>Neuer Key (leer lassen um bestehenden zu behalten)</label><input type="password" id="newApiKey" placeholder="AIza..."></div>
+          <button class="btn btn-primary btn-sm" onclick="updateApiKey()">Speichern</button>
+          <div class="hint" id="apiKeyHint" style="margin-top:8px;font-size:11px;color:var(--text3);font-family:var(--mono);"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px;">Steuer-Ordner</div>
+          <div class="info-box">Steuerlich relevante Dokumente werden zusätzlich in den Kategorie-Ordner „Steuer" kopiert. Stelle sicher dass diese Kategorie angelegt ist.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px;">Lizenz</div>
+          <div class="lic-info" id="licInfo">–</div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:12px;" onclick="deactivateLicense()">Lizenz entfernen</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// LICENCE SYSTEM
+// ══════════════════════════════════════════════
+// Secret is split to avoid trivial discovery
+const _S = ['D0k','uS0','rt_','25vk','_x9q'];
+const SECRET = _S.join('');
+
+async function hmac(data) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey('raw', enc.encode(SECRET), {name:'HMAC',hash:'SHA-256'}, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(data));
+  return btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+}
+
+async function validateLicense(raw) {
+  const clean = raw.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if (clean.length < 8) return null;
+  // Format: base64url(payload).signature
+  const parts = raw.trim().split('.');
+  if (parts.length !== 2) return null;
+  const [payload, sig] = parts;
+  const expected = await hmac(payload);
+  if (expected !== sig) return null;
+  try {
+    const data = JSON.parse(atob(payload.replace(/-/g,'+').replace(/_/g,'/')));
+    if (new Date(data.expiry) < new Date()) return {valid:false, reason:'Lizenz abgelaufen', data};
+    return {valid:true, data};
+  } catch(e) { return null; }
+}
+
+async function checkLicense() {
+  const input = document.getElementById('licInput').value.trim();
+  const btn = document.getElementById('licBtn');
+  const status = document.getElementById('licStatus');
+  if (!input) return;
+  btn.disabled = true; btn.textContent = 'Prüfe...';
+  const result = await validateLicense(input);
+  if (!result || !result.valid) {
+    status.className = 'license-status err';
+    status.textContent = result?.reason || 'Ungültige Lizenznummer. Bitte prüfen.';
+    btn.disabled = false; btn.textContent = 'Aktivieren';
+    return;
+  }
+  localStorage.setItem('ds_license', input);
+  localStorage.setItem('ds_lic_data', JSON.stringify(result.data));
+  status.className = 'license-status ok';
+  status.textContent = '✓ Lizenz gültig – Willkommen, ' + (result.data.name || 'Nutzer') + '!';
+  setTimeout(initApp, 800);
+}
+
+function getLicenseData() {
+  try { return JSON.parse(localStorage.getItem('ds_lic_data') || 'null'); } catch(e) { return null; }
+}
+
+// ══════════════════════════════════════════════
+// APP STATE
+// ══════════════════════════════════════════════
+let workspaceHandle = null;
+let eingangsHandle = null;
+let queue = JSON.parse(localStorage.getItem('ds_queue') || '[]');
+let log = JSON.parse(localStorage.getItem('ds_log') || '[]');
+let categories = JSON.parse(localStorage.getItem('ds_categories') || '[]');
+let currentQueueIndex = 0;
+let currentFileExt = '';
+
+function saveState() {
+  localStorage.setItem('ds_queue', JSON.stringify(queue));
+  localStorage.setItem('ds_log', JSON.stringify(log));
+  localStorage.setItem('ds_categories', JSON.stringify(categories));
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+async function initApp() {
+  const lic = localStorage.getItem('ds_license');
+  if (!lic) { showScreen('licenseScreen'); return; }
+  const result = await validateLicense(lic);
+  if (!result || !result.valid) {
+    localStorage.removeItem('ds_license');
+    showScreen('licenseScreen'); return;
+  }
+  const apiKey = localStorage.getItem('ds_api_key');
+  const hasFolder = localStorage.getItem('ds_workspace_name');
+  if (!apiKey || !hasFolder) { showScreen('setupScreen'); return; }
+  showScreen('mainScreen');
+  renderAll();
+  updateLicInfo();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+window.addEventListener('load', initApp);
+
+// ══════════════════════════════════════════════
+// SETUP
+// ══════════════════════════════════════════════
+function checkSetupReady() {
+  const hasKey = !!localStorage.getItem('ds_api_key');
+  const hasFolder = !!workspaceHandle;
+  document.getElementById('setupContinueBtn').disabled = !(hasKey && hasFolder);
+}
+
+function setupSaveApiKey() {
+  const key = document.getElementById('setupApiKey').value.trim();
+  const st = document.getElementById('keyStatus');
+  if (!key || !key.startsWith('AIza')) {
+    st.className = 'step-status err';
+    st.textContent = 'Ungültiger Key – muss mit AIza beginnen';
+    return;
+  }
+  localStorage.setItem('ds_api_key', key);
+  document.getElementById('setupApiKey').value = '';
+  st.className = 'step-status ok';
+  st.textContent = '✓ Key gespeichert';
+  document.getElementById('saveKeyBtn').classList.add('done');
+  checkSetupReady();
+}
+
+async function setupSelectFolder() {
+  try {
+    const handle = await window.showDirectoryPicker({mode:'readwrite'});
+    workspaceHandle = handle;
+    localStorage.setItem('ds_workspace_name', handle.name);
+    // Eingangsordner anlegen
+    eingangsHandle = await handle.getDirectoryHandle('_Eingang', {create:true});
+    const st = document.getElementById('folderStatus');
+    st.className = 'step-status ok';
+    st.textContent = '✓ Ordner: ' + handle.name;
+    document.getElementById('selectFolderBtn').classList.add('done');
+    checkSetupReady();
+  } catch(e) {
+    if (e.name !== 'AbortError') toast('Ordner konnte nicht geöffnet werden: ' + e.message, 'err');
+  }
+}
+
+async function finishSetup() {
+  if (!workspaceHandle) return;
+  // Kategorieordner für bestehende Kategorien anlegen
+  for (const kat of categories) {
+    try { await workspaceHandle.getDirectoryHandle(kat.folderName, {create:true}); } catch(e) {}
+  }
+  showScreen('mainScreen');
+  renderAll();
+  updateLicInfo();
+}
+
+// ══════════════════════════════════════════════
+// FOLDER MANAGEMENT
+// ══════════════════════════════════════════════
+async function openFolder() {
+  try {
+    const handle = await window.showDirectoryPicker({mode:'readwrite'});
+    const saved = localStorage.getItem('ds_workspace_name');
+    if (saved && handle.name !== saved) {
+      if (!confirm('Der ausgewählte Ordner ("' + handle.name + '") unterscheidet sich vom gespeicherten ("' + saved + '"). Trotzdem verwenden?')) return;
+    }
+    workspaceHandle = handle;
+    localStorage.setItem('ds_workspace_name', handle.name);
+    eingangsHandle = await handle.getDirectoryHandle('_Eingang', {create:true});
+    document.getElementById('folderInfo').textContent = '✓ Verbunden: ' + handle.name;
+    document.getElementById('appStatusDot').className = 'status-dot ok';
+    document.getElementById('appStatusText').textContent = 'Bereit';
+    toast('Ordner verbunden: ' + handle.name, 'ok');
+  } catch(e) {
+    if (e.name !== 'AbortError') toast('Fehler: ' + e.message, 'err');
+  }
+}
+
+async function ensureWorkspace() {
+  if (workspaceHandle) {
+    try { await workspaceHandle.getDirectoryHandle('_Eingang', {create:true}); return true; } catch(e) {}
+  }
+  toast('Bitte zuerst den Arbeitsordner verbinden (Einstellungen → Ordner neu verbinden)', 'warn');
+  return false;
+}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════════
+// MAIN PROCESS
+// ══════════════════════════════════════════════
+async function runProcess(btn) {
+  if (!await ensureWorkspace()) return;
+  const apiKey = localStorage.getItem('ds_api_key');
+  if (!apiKey) { toast('Bitte zuerst Gemini API Key eintragen (Einstellungen)', 'warn'); return; }
+  if (categories.length === 0) { toast('Bitte zuerst mindestens eine Kategorie anlegen', 'warn'); return; }
+
+  btn.disabled = true; btn.textContent = '⏳ Läuft...';
+  const progress = document.getElementById('progressWrap');
+  const bar = document.getElementById('progressBar');
+  const info = document.getElementById('runInfo');
+  progress.classList.add('show');
+
+  try {
+    eingangsHandle = await workspaceHandle.getDirectoryHandle('_Eingang', {create:true});
+    const files = [];
+    for await (const [name, handle] of eingangsHandle.entries()) {
+      if (handle.kind === 'file') {
+        const f = await handle.getFile();
+        const allowed = ['application/pdf','image/jpeg','image/jpg','image/png','image/webp','image/gif','image/heic'];
+        if (allowed.includes(f.type) || name.match(/\.(pdf|jpg|jpeg|png|webp|gif|heic)$/i)) {
+          files.push({name, handle, file:f});
+        }
+      }
+    }
+
+    if (files.length === 0) { info.textContent = 'Keine neuen Dokumente im Eingangsordner.'; toast('Eingangsordner ist leer', 'info'); }
+    else {
+      info.textContent = files.length + ' Dokument(e) gefunden – analysiere...';
+      let done = 0;
+      for (const item of files) {
+        info.textContent = 'Verarbeite: ' + item.name + ' (' + (done+1) + '/' + files.length + ')';
+        bar.style.width = Math.round((done / files.length) * 100) + '%';
+        try { await processFile(item, apiKey); }
+        catch(e) { toast('Fehler bei "' + item.name + '": ' + e.message, 'err'); console.error(e); }
+        done++;
+        await sleep(1500); // Rate limit
+      }
+      bar.style.width = '100%';
+      info.textContent = done + ' Dokument(e) verarbeitet.';
+      toast(done + ' Dokument(e) verarbeitet', 'ok');
+    }
+  } catch(e) {
+    toast('Fehler: ' + e.message, 'err');
+    info.textContent = 'Fehler: ' + e.message;
+  }
+
+  saveState();
+  renderAll();
+  btn.disabled = false; btn.textContent = '▶ Jetzt starten';
+  setTimeout(() => { progress.classList.remove('show'); bar.style.width='0%'; }, 2000);
+}
+
+async function processFile(item, apiKey) {
+  const {name, handle, file} = item;
+
+  // Dateigröße prüfen (max 15MB)
+  if (file.size > 15 * 1024 * 1024) {
+    addToQueue(name, '', '', '', '', '', false, 'Datei zu groß (>' + Math.round(file.size/1024/1024) + 'MB). Bitte manuell zuordnen.');
+    return;
+  }
+
+  // Base64 kodieren
+  const ab = await file.arrayBuffer();
+  const base64 = arrayBufferToBase64(ab);
+  const mimeType = file.type || guessMime(name);
+
+  // Gemini analysieren
+  const katNamen = categories.map(k => k.name);
+  const prompt = buildPrompt(katNamen);
+
+  const response = await fetch(
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + apiKey,
+    {method:'POST', headers:{'Content-Type':'application/json'},
+     body: JSON.stringify({contents:[{parts:[{inline_data:{mime_type:mimeType,data:base64}},{text:prompt}]}]})}
+  );
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error('Gemini ' + response.status + ': ' + (err.error?.message || response.statusText));
+  }
+
+  const data = await response.json();
+  const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+  if (!rawText) {
+    const reason = data.candidates?.[0]?.finishReason || 'UNKNOWN';
+    addToQueue(name, '', '', '', '', '', false, 'Gemini gab keine Antwort zurück (finishReason: ' + reason + ')');
+    return;
+  }
+
+  // JSON parsen
+  let parsed = {};
+  try {
+    const cleaned = rawText.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+    const m = cleaned.match(/\{[\s\S]*\}/);
+    parsed = JSON.parse(m ? m[0] : cleaned);
+  } catch(e) {
+    parsed = {konfidenz:0, unklar_grund:'KI-Antwort nicht lesbar: ' + rawText.substring(0,100)};
+  }
+
+  const kategorie = (parsed.kategorie || '').trim();
+  const art = cleanPart(parsed.art || '');
+  const typ = cleanPart(parsed.dokumenttyp || '');
+  const person = cleanPart(parsed.person || '');
+  const konfidenz = parseInt(parsed.konfidenz) || 0;
+  const steuer = !!parsed.steuer_relevant;
+
+  const heute = datumHeute();
+  const datum = parsed.datum && /^\d{8}$/.test(String(parsed.datum)) ? String(parsed.datum) : heute;
+
+  // Kategorie suchen
+  const katMatch = categories.find(k => k.name.toLowerCase() === kategorie.toLowerCase());
+  const konfident = konfidenz >= 70 && !!katMatch;
+
+  // Unklarer Grund
+  let unklarGrund = parsed.unklar_grund || '';
+  if (!katMatch && kategorie) unklarGrund = 'Kategorie "' + kategorie + '" nicht in der Liste. Bitte anlegen oder andere wählen.';
+  else if (!kategorie && !unklarGrund) unklarGrund = 'Keine passende Kategorie erkannt.';
+
+  const ext = name.match(/\.([^.]+)$/)?.[1]?.toLowerCase() || '';
+  const newName = buildName(datum, katMatch?.name||'', art, typ, person, ext);
+
+  if (konfident) {
+    // Automatisch ablegen
+    await moveFile(handle, eingangsHandle, katMatch.folderName, newName);
+
+    // Steuer-Kopie
+    if (steuer) {
+      const steuerKat = categories.find(k => k.name.toLowerCase() === 'steuer');
+      if (steuerKat) {
+        try { await copyFile(handle, katMatch.folderName, steuerKat.folderName, newName); } catch(e) { console.warn('Steuer-Kopie fehlgeschlagen:', e); }
+      }
+    }
+
+    addToLog(name, newName, katMatch.name, konfidenz, steuer, 'Automatisch');
+    toast('✓ ' + newName, 'ok');
+  } else {
+    // Warteschlange
+    addToQueue(name, kategorie, art, typ, person, datum, steuer, unklarGrund, konfidenz);
+  }
+}
+
+// ══════════════════════════════════════════════
+// FILE OPERATIONS
+// ══════════════════════════════════════════════
+async function moveFile(srcHandle, srcFolderHandle, destFolderName, newName) {
+  const destFolder = await workspaceHandle.getDirectoryHandle(destFolderName, {create:true});
+  const file = await srcHandle.getFile();
+  const ab = await file.arrayBuffer();
+  const newHandle = await destFolder.getFileHandle(newName, {create:true});
+  const writable = await newHandle.createWritable();
+  await writable.write(ab);
+  await writable.close();
+  await srcFolderHandle.removeEntry(srcHandle.name);
+}
+
+async function copyFile(srcHandle, srcFolderName, destFolderName, newName) {
+  const srcFolder = await workspaceHandle.getDirectoryHandle(srcFolderName, {create:false});
+  const src = await srcFolder.getFileHandle(newName);
+  const file = await src.getFile();
+  const ab = await file.arrayBuffer();
+  const destFolder = await workspaceHandle.getDirectoryHandle(destFolderName, {create:true});
+  const newHandle = await destFolder.getFileHandle(newName, {create:true});
+  const writable = await newHandle.createWritable();
+  await writable.write(ab);
+  await writable.close();
+}
+
+async function moveFromQueueToCategory(fileName, destFolderName, newName) {
+  // Datei befindet sich im Eingang oder Warteschlange – suche sie
+  const eingang = await workspaceHandle.getDirectoryHandle('_Eingang', {create:true});
+  let srcHandle = null;
+  let srcFolder = eingang;
+  try { srcHandle = await eingang.getFileHandle(fileName); } catch(e) {}
+
+  if (!srcHandle) throw new Error('Datei "' + fileName + '" nicht im Eingangsordner gefunden. Evtl. bereits verschoben.');
+
+  const destFolder = await workspaceHandle.getDirectoryHandle(destFolderName, {create:true});
+  const file = await srcHandle.getFile();
+  const ab = await file.arrayBuffer();
+  const newHandle = await destFolder.getFileHandle(newName, {create:true});
+  const writable = await newHandle.createWritable();
+  await writable.write(ab);
+  await writable.close();
+  await eingang.removeEntry(fileName);
+  return newHandle;
+}
+
+// ══════════════════════════════════════════════
+// QUEUE
+// ══════════════════════════════════════════════
+function addToQueue(name, kat, art, typ, person, datum, steuer, reason, konfidenz) {
+  queue.push({id: Date.now(), name, kat, art, typ, person, datum, steuer, reason, konfidenz: konfidenz||0, status:'offen'});
+}
+
+function renderQueue() {
+  const el = document.getElementById('queueContent');
+  const open = queue.filter(q => q.status === 'offen');
+  const badge = document.getElementById('qBadge');
+  badge.textContent = open.length;
+  badge.style.display = open.length > 0 ? 'inline-flex' : 'none';
+
+  if (open.length === 0) { el.innerHTML = '<div class="empty">✅ Keine offenen Dokumente</div>'; return; }
+  el.innerHTML = open.map(q =>
+    '<div class="q-card">' +
+    '<div class="q-card-name">📄 ' + esc(q.name) + '</div>' +
+    '<div class="q-card-reason">' + esc(q.reason || 'Unklare Kategorie') + '</div>' +
+    '<div class="q-card-meta">Konfidenz: ' + (q.konfidenz||0) + '% · Gemini schlug vor: ' + esc(q.kat||'keine') + '</div>' +
+    '<button class="btn btn-primary btn-sm" onclick="openModal(' + q.id + ')">Manuell zuordnen →</button>' +
+    '</div>'
+  ).join('');
+}
+
+function openModal(id) {
+  const item = queue.find(q => q.id === id);
+  if (!item) return;
+  currentQueueIndex = id;
+  document.getElementById('m-filename').textContent = item.name;
+  setGV('gv-kat', item.kat);
+  setGV('gv-art', item.art);
+  setGV('gv-typ', item.typ);
+  setGV('gv-person', item.person);
+  document.getElementById('m-reason').textContent = item.reason || '–';
+  document.getElementById('m-art').value = item.art || '';
+  document.getElementById('m-typ').value = item.typ || '';
+  document.getElementById('m-person').value = item.person || '';
+  document.getElementById('m-datum').value = item.datum || '';
+  document.getElementById('m-steuer').checked = !!item.steuer;
+  currentFileExt = item.name.match(/\.([^.]+)$/)?.[1]?.toLowerCase() || '';
+  // Dropdown
+  const sel = document.getElementById('m-kat');
+  sel.innerHTML = '<option value="">– wählen –</option>';
+  categories.forEach(k => {
+    const opt = document.createElement('option');
+    opt.value = k.folderName;
+    opt.dataset.name = k.name;
+    opt.textContent = k.name;
+    if (k.name.toLowerCase() === (item.kat||'').toLowerCase()) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  updatePreview();
+  document.getElementById('queueOverlay').classList.add('active');
+}
+
+function skipModal() {
+  document.getElementById('queueOverlay').classList.remove('active');
+}
+
+function setGV(id, val) {
+  const el = document.getElementById(id);
+  if (val && val.trim()) { el.textContent = val; el.className = 'gh-value'; }
+  else { el.textContent = 'nicht erkannt'; el.className = 'gh-value none'; }
+}
+
+function updatePreview() {
+  const sel = document.getElementById('m-kat');
+  const katName = sel.selectedIndex > 0 ? (sel.options[sel.selectedIndex].dataset.name || '') : '';
+  const datum = document.getElementById('m-datum').value.trim() || datumHeute();
+  const art = document.getElementById('m-art').value.trim();
+  const typ = document.getElementById('m-typ').value.trim();
+  const person = document.getElementById('m-person').value.trim();
+  const preview = document.getElementById('m-preview');
+  const btn = document.getElementById('resolveBtn');
+  if (!katName) { preview.textContent = '– bitte Kategorie wählen –'; preview.className = 'preview-bar dim'; btn.disabled = true; return; }
+  const name = buildName(datum, katName, art, typ, person, currentFileExt);
+  preview.textContent = name;
+  preview.className = 'preview-bar';
+  btn.disabled = false;
+}
+
+async function resolveItem() {
+  const item = queue.find(q => q.id === currentQueueIndex);
+  if (!item) return;
+  const sel = document.getElementById('m-kat');
+  const folderName = sel.value;
+  const katName = sel.selectedIndex > 0 ? (sel.options[sel.selectedIndex].dataset.name || '') : '';
+  if (!folderName || !katName) { toast('Bitte Kategorie wählen', 'warn'); return; }
+  if (!await ensureWorkspace()) return;
+
+  const datum = document.getElementById('m-datum').value.trim() || datumHeute();
+  const art = document.getElementById('m-art').value.trim();
+  const typ = document.getElementById('m-typ').value.trim();
+  const person = document.getElementById('m-person').value.trim();
+  const steuer = document.getElementById('m-steuer').checked;
+  const newName = buildName(datum, katName, art, typ, person, currentFileExt);
+
+  const btn = document.getElementById('resolveBtn');
+  btn.textContent = '⏳...'; btn.disabled = true;
+
+  try {
+    await moveFromQueueToCategory(item.name, folderName, newName);
+
+    if (steuer) {
+      const steuerKat = categories.find(k => k.name.toLowerCase() === 'steuer');
+      if (steuerKat) {
+        try { await copyFile(null, folderName, steuerKat.folderName, newName); } catch(e) {}
+      }
+    }
+
+    item.status = 'erledigt';
+    addToLog(item.name, newName, katName, item.konfidenz, steuer, 'Manuell');
+    saveState();
+    renderAll();
+    document.getElementById('queueOverlay').classList.remove('active');
+    toast('✓ Abgelegt: ' + newName, 'ok');
+    btn.textContent = '✓ Ablegen'; btn.disabled = false;
+  } catch(e) {
+    toast('Fehler: ' + e.message, 'err');
+    btn.textContent = '✓ Ablegen'; btn.disabled = false;
+  }
+}
+
+// ══════════════════════════════════════════════
+// KATEGORIEN
+// ══════════════════════════════════════════════
+function renderKategorien() {
+  const list = document.getElementById('katList');
+  if (categories.length === 0) { list.innerHTML = '<div class="empty">Noch keine Kategorien angelegt</div>'; return; }
+  list.innerHTML = categories.map((k,i) =>
+    '<div class="kat-item">' +
+    '<span class="kat-name">📁 ' + esc(k.name) + '</span>' +
+    '<span class="kat-folder">' + esc(k.folderName) + '</span>' +
+    '<button class="btn btn-danger btn-sm" onclick="deleteKategorie(' + i + ')">Löschen</button>' +
+    '</div>'
+  ).join('');
+}
+
+function toggleAddKat() {
+  const f = document.getElementById('addKatForm');
+  f.style.display = f.style.display === 'none' ? 'grid' : 'none';
+  if (f.style.display === 'grid') document.getElementById('newKatName').focus();
+}
+
+async function addKategorie() {
+  const name = document.getElementById('newKatName').value.trim();
+  if (!name) { toast('Bitte Kategoriename eingeben', 'warn'); return; }
+  if (categories.some(k => k.name.toLowerCase() === name.toLowerCase())) { toast('Kategorie existiert bereits', 'warn'); return; }
+  const folderName = cleanPart(name, 50);
+  categories.push({name, folderName});
+  if (workspaceHandle) {
+    try { await workspaceHandle.getDirectoryHandle(folderName, {create:true}); }
+    catch(e) { toast('Ordner konnte nicht angelegt werden: ' + e.message, 'err'); }
+  }
+  saveState(); renderAll();
+  document.getElementById('newKatName').value = '';
+  document.getElementById('addKatForm').style.display = 'none';
+  toast('Kategorie "' + name + '" angelegt', 'ok');
+}
+
+async function deleteKategorie(i) {
+  const kat = categories[i];
+  if (!confirm('Kategorie "' + kat.name + '" löschen?\n\nDer Ordner auf deinem Gerät wird NICHT gelöscht.')) return;
+  categories.splice(i, 1);
+  saveState(); renderAll();
+  toast('Kategorie entfernt', 'ok');
+}
+
+// ══════════════════════════════════════════════
+// LOG
+// ══════════════════════════════════════════════
+function addToLog(origName, newName, kategorie, konfidenz, steuer, typ) {
+  log.unshift({
+    datum: new Date().toISOString().split('T')[0],
+    origName, newName, kategorie, konfidenz, steuer, typ
+  });
+  if (log.length > 200) log = log.slice(0,200);
+}
+
+function renderLog() {
+  const tbody = document.getElementById('logBody');
+  if (log.length === 0) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty">Noch keine Einträge</div></td></tr>'; return; }
+  tbody.innerHTML = log.map(l =>
+    '<tr>' +
+    '<td>' + esc(l.datum||'–') + '</td>' +
+    '<td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+esc(l.origName||'')+'">'+esc(l.origName||'–')+'</td>' +
+    '<td style="max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+esc(l.newName||'')+'">'+esc(l.newName||'–')+'</td>' +
+    '<td>'+esc(l.kategorie||'–')+'</td>' +
+    '<td>'+(l.konfidenz ? l.konfidenz+'%' : '–')+'</td>' +
+    '<td><span class="tag '+(l.typ==='Manuell'?'tag-manual':'tag-auto')+'">'+esc(l.typ||'–')+'</span></td>' +
+    '</tr>'
+  ).join('');
+}
+
+// ══════════════════════════════════════════════
+// EINSTELLUNGEN
+// ══════════════════════════════════════════════
+function updateApiKey() {
+  const key = document.getElementById('newApiKey').value.trim();
+  if (!key) return;
+  if (!key.startsWith('AIza')) { document.getElementById('apiKeyHint').textContent = '⚠ Key muss mit AIza beginnen'; return; }
+  localStorage.setItem('ds_api_key', key);
+  document.getElementById('newApiKey').value = '';
+  document.getElementById('apiKeyHint').textContent = '✓ Gespeichert';
+  toast('API Key aktualisiert', 'ok');
+}
+
+function updateLicInfo() {
+  const data = getLicenseData();
+  const el = document.getElementById('licInfo');
+  if (!data) { el.innerHTML = '–'; return; }
+  el.innerHTML =
+    '<div class="lic-row"><span class="lic-key">Name</span><span class="lic-val">'+(data.name||'–')+'</span></div>' +
+    '<div class="lic-row"><span class="lic-key">Ablaufdatum</span><span class="lic-val">'+(data.expiry||'–')+'</span></div>' +
+    '<div class="lic-row"><span class="lic-key">Lizenz-ID</span><span class="lic-val">'+(data.id||'–')+'</span></div>';
+  const folder = localStorage.getItem('ds_workspace_name');
+  document.getElementById('folderInfo').textContent = folder ? '✓ Gespeicherter Ordner: ' + folder + ' (oben neu verbinden)' : 'Kein Ordner verbunden';
+  const hasKey = !!localStorage.getItem('ds_api_key');
+  document.getElementById('apiKeyHint').textContent = hasKey ? '✓ API Key ist gespeichert' : 'Kein API Key gespeichert';
+}
+
+function deactivateLicense() {
+  if (!confirm('Lizenz wirklich entfernen? Du benötigst danach eine neue Lizenznummer.')) return;
+  localStorage.removeItem('ds_license');
+  localStorage.removeItem('ds_lic_data');
+  showScreen('licenseScreen');
+}
+
+// ══════════════════════════════════════════════
+// RENDER ALL
+// ══════════════════════════════════════════════
+function renderAll() {
+  renderQueue();
+  renderKategorien();
+  renderLog();
+  updateLicInfo();
+}
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+function buildPrompt(katNamen) {
+  return 'Du bist ein Dokumenten-Kategorisierungsassistent für deutsche Privatunterlagen.\n\n' +
+    'Verfügbare Kategorien (NUR diese verwenden): ' + (katNamen.length > 0 ? katNamen.join(', ') : 'keine – kategorie leer lassen') + '\n\n' +
+    'Namenskonvention: YYYYMMDD_Kategorie_Art_Dokumenttyp_Person\n\n' +
+    'Felder:\n' +
+    '- kategorie: EXAKT aus der Liste oder leer\n' +
+    '- art: Unterkategorie (KFZ, Leben, Haftpflicht, Strom, Wasser, Gehalt usw.)\n' +
+    '- dokumenttyp: Rechnung, Versicherungsschein, Mahnung, Vertrag, Bescheid, Kontoauszug, Quittung, Garantiebeleg, Anleitung\n' +
+    '- person: Empfänger oder Absender falls erkennbar; sonst leer\n' +
+    '- datum: Belegdatum (YYYYMMDD) – NICHT heute\n' +
+    '- steuer_relevant: true wenn steuerlich absetzbar\n' +
+    '- konfidenz: 0–100\n' +
+    '- unklar_grund: nur wenn konfidenz < 70 oder kategorie leer\n\n' +
+    'Nur ASCII + Bindestrich in Textfeldern. Keine neue Kategorie erfinden.\n\n' +
+    'Antworte NUR mit diesem JSON:\n' +
+    '{"kategorie":"","art":"","dokumenttyp":"","person":"","datum":"","steuer_relevant":false,"steuer_begruendung":"","konfidenz":0,"unklar_grund":""}';
+}
+
+function buildName(datum, katName, art, typ, person, ext) {
+  const parts = [datum, cleanPart(katName,40), cleanPart(art,30), cleanPart(typ,30), cleanPart(person,30)].filter(p => p && p.length > 0);
+  return parts.join('_') + (ext ? '.' + ext : '');
+}
+
+function cleanPart(s, maxLen) {
+  if (!s) return '';
+  return s.toString()
+    .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue')
+    .replace(/Ä/g,'Ae').replace(/Ö/g,'Oe').replace(/Ü/g,'Ue').replace(/ß/g,'ss')
+    .replace(/[^a-zA-Z0-9\-]/g,'_').replace(/_+/g,'_').replace(/^_|_$/g,'')
+    .substring(0, maxLen || 40);
+}
+
+function datumHeute() {
+  const d = new Date();
+  return d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate());
+}
+
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function guessMime(name) {
+  const ext = (name.split('.').pop()||'').toLowerCase();
+  const map = {pdf:'application/pdf',jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',webp:'image/webp',gif:'image/gif',heic:'image/heic'};
+  return map[ext] || 'application/octet-stream';
+}
+
+function arrayBufferToBase64(buffer) {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const chunk = 8192;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toast(msg, type) {
+  const wrap = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = 'toast t-' + (type||'info');
+  t.textContent = msg;
+  wrap.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('show'));
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => wrap.removeChild(t), 300); }, 4000);
+}
+
+// Tastatur: Enter auf Lizenz-Input
+document.getElementById('licInput').addEventListener('keydown', e => { if(e.key==='Enter') checkLicense(); });
+</script>
+</body>
+</html>
