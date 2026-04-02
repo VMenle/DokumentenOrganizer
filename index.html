@@ -233,7 +233,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
     <div class="license-logo">Dokument<span>Organizer</span></div>
     <div class="license-sub">KI-gestützte Dokumentenverwaltung</div>
     <div class="license-label">Lizenznummer eingeben</div>
-    <input class="license-input" id="licInput" type="text" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="24" autocomplete="off" spellcheck="false">
+    <input class="license-input" id="licInput" type="text" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" autocomplete="off" spellcheck="false">
     <button class="license-btn" id="licBtn" onclick="checkLicense()">Aktivieren</button>
     <div class="license-status" id="licStatus"></div>
     <div class="license-info">
@@ -408,52 +408,75 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 
 <script>
 // ══════════════════════════════════════════════
-// LICENCE SYSTEM
+// LIZENZ-SYSTEM v2 – kurze Schlüssel
+// Format: XXXX-XXXX-XXXX-XXXX (16 Zeichen + 3 Trennstriche)
+// Crockford Base32 – keine 0/O, 1/I/L Verwechslung
 // ══════════════════════════════════════════════
-// Secret is split to avoid trivial discovery
-const _S = ['D0k','uS0','rt_','25vk','_x9q'];
-const SECRET = _S.join('');
+const CHARS = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'; // exakt 32 Zeichen
+const SECRET = 'D0kuOrg_25vk_x9q'; // Muss in index.html UND admin.html identisch sein
 
-async function hmac(data) {
-  const enc = new TextEncoder();
-  const key = await crypto.subtle.importKey('raw', enc.encode(SECRET), {name:'HMAC',hash:'SHA-256'}, false, ['sign']);
-  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(data));
-  return btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+function _toB32(num, len) {
+  let r = '';
+  for (let i = 0; i < len; i++) { r = CHARS[num % 32] + r; num = Math.floor(num / 32); }
+  return r;
+}
+function _fromB32(str) {
+  let r = 0;
+  for (const c of str.toUpperCase()) {
+    const idx = CHARS.indexOf(c);
+    if (idx < 0) return -1;
+    r = r * 32 + idx;
+  }
+  return r;
+}
+function _hash32(s, seed) {
+  let h = seed >>> 0;
+  for (let i = 0; i < s.length; i++) {
+    h = Math.imul(h ^ s.charCodeAt(i), 0x9e3779b9);
+    h ^= h >>> 16;
+  }
+  return h >>> 0;
+}
+function _sign6(payload) {
+  const h1 = _hash32(payload + '|' + SECRET, 0xdeadbeef);
+  const h2 = _hash32(SECRET + '|' + payload, 0xcafebabe);
+  const combined = ((h1 & 0x7fff) * 32768 + (h2 & 0x7fff)) % (32*32*32*32*32*32);
+  return _toB32(combined, 6);
 }
 
-async function validateLicense(raw) {
-  const clean = raw.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
-  if (clean.length < 8) return null;
-  // Format: base64url(payload).signature
-  const parts = raw.trim().split('.');
-  if (parts.length !== 2) return null;
-  const [payload, sig] = parts;
-  const expected = await hmac(payload);
-  if (expected !== sig) return null;
-  try {
-    const data = JSON.parse(atob(payload.replace(/-/g,'+').replace(/_/g,'/')));
-    if (new Date(data.expiry) < new Date()) return {valid:false, reason:'Lizenz abgelaufen', data};
-    return {valid:true, data};
-  } catch(e) { return null; }
+function validateLicense(key) {
+  const raw = (key||'').replace(/-/g,'').toUpperCase().trim();
+  if (raw.length !== 16) return {valid:false, reason:'Ungültige Lizenznummer'};
+  for (const c of raw) { if (CHARS.indexOf(c) < 0) return {valid:false, reason:'Ungültige Lizenznummer'}; }
+  const payload = raw.substring(0,10);
+  const sig = raw.substring(10,16);
+  if (sig !== _sign6(payload)) return {valid:false, reason:'Ungültige Lizenznummer'};
+  const yyNum = _fromB32(payload.substring(3,4));
+  const mmNum = _fromB32(payload.substring(4,5)) + 1;
+  const year = 2020 + yyNum;
+  const expiry = year + '-' + String(mmNum).padStart(2,'0');
+  const expiryDate = new Date(year, mmNum, 0, 23, 59, 59);
+  if (expiryDate < new Date()) return {valid:false, reason:'Lizenz abgelaufen (' + expiry + ')', expiry};
+  return {valid:true, expiry};
 }
 
-async function checkLicense() {
-  const input = document.getElementById('licInput').value.trim();
+function checkLicense() {
+  const input = document.getElementById('licInput').value.trim().toUpperCase();
   const btn = document.getElementById('licBtn');
   const status = document.getElementById('licStatus');
   if (!input) return;
   btn.disabled = true; btn.textContent = 'Prüfe...';
-  const result = await validateLicense(input);
+  const result = validateLicense(input);
   if (!result || !result.valid) {
     status.className = 'license-status err';
-    status.textContent = result?.reason || 'Ungültige Lizenznummer. Bitte prüfen.';
+    status.textContent = result?.reason || 'Ungültige Lizenznummer';
     btn.disabled = false; btn.textContent = 'Aktivieren';
     return;
   }
   localStorage.setItem('ds_license', input);
-  localStorage.setItem('ds_lic_data', JSON.stringify(result.data));
+  localStorage.setItem('ds_lic_data', JSON.stringify(result));
   status.className = 'license-status ok';
-  status.textContent = '✓ Lizenz gültig – Willkommen, ' + (result.data.name || 'Nutzer') + '!';
+  status.textContent = '✓ Lizenz gültig bis ' + result.expiry + ' – Willkommen!';
   setTimeout(initApp, 800);
 }
 
@@ -481,10 +504,10 @@ function saveState() {
 // ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
-async function initApp() {
+function initApp() {
   const lic = localStorage.getItem('ds_license');
   if (!lic) { showScreen('licenseScreen'); return; }
-  const result = await validateLicense(lic);
+  const result = validateLicense(lic);
   if (!result || !result.valid) {
     localStorage.removeItem('ds_license');
     showScreen('licenseScreen'); return;
@@ -1001,9 +1024,7 @@ function updateLicInfo() {
   const el = document.getElementById('licInfo');
   if (!data) { el.innerHTML = '–'; return; }
   el.innerHTML =
-    '<div class="lic-row"><span class="lic-key">Name</span><span class="lic-val">'+(data.name||'–')+'</span></div>' +
-    '<div class="lic-row"><span class="lic-key">Ablaufdatum</span><span class="lic-val">'+(data.expiry||'–')+'</span></div>' +
-    '<div class="lic-row"><span class="lic-key">Lizenz-ID</span><span class="lic-val">'+(data.id||'–')+'</span></div>';
+    '<div class="lic-row"><span class="lic-key">Ablaufdatum</span><span class="lic-val">'+(data.expiry||'–')+'</span></div>';
   const folder = localStorage.getItem('ds_workspace_name');
   document.getElementById('folderInfo').textContent = folder ? '✓ Gespeicherter Ordner: ' + folder + ' (oben neu verbinden)' : 'Kein Ordner verbunden';
   const hasKey = !!localStorage.getItem('ds_api_key');
