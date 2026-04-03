@@ -576,10 +576,14 @@ function showScreen(id) {
 (function() {
   const lic = localStorage.getItem('ds_license');
   if (lic && (lic.includes('.') || lic.length > 25)) {
-    // Altes Base64-Format – entfernen
     localStorage.removeItem('ds_license');
     localStorage.removeItem('ds_lic_data');
   }
+  // Browser-Autofill im Lizenzfeld verhindern – Chrome ignoriert autocomplete="off"
+  setTimeout(function() {
+    const el = document.getElementById('licInput');
+    if (el) el.value = '';
+  }, 100);
 })();
 
 window.addEventListener('load', initApp);
@@ -1428,6 +1432,15 @@ function toast(msg, type) {
 
 // Tastatur: Enter auf Lizenz-Input
 document.getElementById('licInput').addEventListener('keydown', e => { if(e.key==='Enter') checkLicense(); });
+
+// Browser-Autofill entfernen – Chrome ignoriert autocomplete="off"
+// Nur leeren wenn kein gültiger Lizenzschlüssel drin steht
+setTimeout(() => {
+  const f = document.getElementById('licInput');
+  if (f && f.value && !f.value.match(/^[0-9A-Z]{4}-[0-9A-Z]{4}-[0-9A-Z]{4}-[0-9A-Z]{4}$/i)) {
+    f.value = '';
+  }
+}, 200);
 </script>
 </body>
 </html>
