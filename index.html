@@ -233,7 +233,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
     <div class="license-logo">Dokument<span>Organizer</span></div>
     <div class="license-sub">KI-gestützte Dokumentenverwaltung</div>
     <div class="license-label">Lizenznummer eingeben</div>
-    <input class="license-input" id="licInput" type="text" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" autocomplete="off" spellcheck="false">
+    <input class="license-input" id="licInput" type="text" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" name="do-not-autofill">
     <button class="license-btn" id="licBtn" onclick="checkLicense()">Aktivieren</button>
     <div class="license-status" id="licStatus"></div>
     <div class="license-info">
