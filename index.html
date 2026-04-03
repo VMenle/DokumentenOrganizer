@@ -7,19 +7,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0c1219;
-  --surface: #131c27;
-  --surface2: #1a2535;
-  --surface3: #213045;
-  --border: #2a3d55;
-  --border2: #344d6a;
-  --accent: #38bdf8;
-  --accent2: #34d399;
-  --warn: #fbbf24;
+  --bg: #0d1f2d;
+  --surface: #132030;
+  --surface2: #1a3040;
+  --surface3: #214050;
+  --border: #2a4060;
+  --border2: #345070;
+  --accent: #d4820a;
+  --accent-light: #f0a530;
+  --accent2: #2a9d8f;
+  --warn: #f0a530;
   --danger: #f87171;
-  --text: #e2eaf4;
-  --text2: #8ba4c0;
-  --text3: #4d6a88;
+  --text: #f0ebe5;
+  --text2: #8ba4b8;
+  --text3: #4d6a80;
   --mono: 'DM Mono', monospace;
   --body: 'Outfit', sans-serif;
   --serif: 'Instrument Serif', serif;
@@ -84,7 +85,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 /* ── MAIN APP ── */
 #mainScreen{flex-direction:column;}
 .app-header{border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:58px;flex-shrink:0;background:var(--surface);}
-.app-logo{font-family:var(--serif);font-size:20px;letter-spacing:-.3px;}
+.app-logo{font-family:var(--serif);font-size:20px;letter-spacing:-.3px;display:flex;align-items:center;gap:8px;}
+.app-logo-mark{font-size:18px;}
 .app-logo span{color:var(--accent);}
 .header-right{display:flex;align-items:center;gap:14px;}
 .status-pill{display:flex;align-items:center;gap:6px;padding:5px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:100px;font-size:12px;color:var(--text2);}
@@ -230,7 +232,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 <!-- ══ LICENSE SCREEN ══ -->
 <div class="screen active" id="licenseScreen">
   <div class="license-box">
-    <div class="license-logo">Dokument<span>Organizer</span></div>
+    <div class="license-logo">📂 Dokument<span>Organizer</span></div>
     <div class="license-sub">KI-gestützte Dokumentenverwaltung</div>
     <div class="license-label">Lizenznummer eingeben</div>
     <input class="license-input" id="licInput" type="text" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" name="do-not-autofill" readonly onfocus="this.removeAttribute('readonly')" onclick="this.removeAttribute('readonly')">
@@ -315,7 +317,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
   </div>
 
   <div class="app-header">
-    <div class="app-logo">Dokument<span>Organizer</span></div>
+    <div class="app-logo"><span class="app-logo-mark">📂</span> Dokument<span>Organizer</span></div>
     <div class="header-right">
       <div class="status-pill"><div class="status-dot ok" id="appStatusDot"></div><span id="appStatusText">Bereit</span></div>
       <button class="btn btn-ghost btn-sm" onclick="openFolder()" title="Ordner neu verbinden">📁</button>
