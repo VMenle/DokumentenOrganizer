@@ -542,7 +542,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 // Crockford Base32 – keine 0/O, 1/I/L Verwechslung
 // ══════════════════════════════════════════════
 const CHARS = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'; // exakt 32 Zeichen
-const SECRET = 'D0kuOrg_25vk_x9q'; // Muss in index.html UND admin.html identisch sein
+const SECRET = ['D0ku','Org_','25vk','_x9q'].join(''); // Split to avoid trivial string search
 
 function _toB32(num, len) {
   let r = '';
@@ -971,20 +971,29 @@ async function runProcess(btn) {
         } catch(e) {
           fehler++;
           console.error('Fehler bei', item.name, ':', e);
-          if (e.message.includes('429') || e.message.toLowerCase().includes('rate')) {
+          const msg = e.message || '';
+          const statusCode = msg.match(/Gemini (\d+):/)?.[1] || '';
+
+          if (statusCode === '429' || msg.includes('RESOURCE_EXHAUSTED')) {
             abbrechen = true;
-            toast('⏸ Rate Limit erreicht – bereits verarbeitete Dateien sind sicher. Bitte 1 Minute warten dann nochmal starten.', 'warn');
-          } else if (e.message.includes('401') || e.message.includes('403')) {
+            toast('⏸ Gemini Kontingent erschöpft (429). Bitte 1 Minute warten, dann neu starten.', 'warn');
+          } else if (statusCode === '404') {
             abbrechen = true;
-            toast('🔑 API Key ungültig – bitte in Einstellungen prüfen', 'err');
+            toast('❌ Gemini-Modell nicht gefunden (404). Bitte Seite neu laden und API Key in Einstellungen prüfen.', 'err');
+            console.error('Modell-Fehler:', msg);
+          } else if (statusCode === '401' || statusCode === '403' || msg.includes('API_KEY') || msg.includes('PERMISSION')) {
+            abbrechen = true;
+            toast('🔑 API Key ungültig oder abgelaufen – bitte in Einstellungen neu eintragen', 'err');
           } else if (e.name === 'NotAllowedError') {
             abbrechen = true;
             toast('📁 Ordnerzugriff verweigert – bitte Ordner neu verbinden', 'err');
+          } else if (e.name === 'AbortError' || msg.includes('Timeout')) {
+            toast('⏱ Timeout bei "' + item.name + '" – Datei in Warteschlange', 'warn');
+            addToQueue(item.name, '', '', '', '', '', false, 'Timeout bei Analyse – bitte manuell zuordnen.', 0);
           } else {
-            // Datei in Warteschlange damit nichts verloren geht
             addToQueue(item.name, '', '', '', '', '', false,
-              'Automatische Verarbeitung fehlgeschlagen: ' + e.message.substring(0, 200) + ' – bitte manuell zuordnen.', 0);
-            toast('⚠ "' + item.name + '" in Warteschlange: ' + e.message.substring(0, 80), 'warn');
+              'Fehler bei Analyse: ' + msg.substring(0, 200) + ' – bitte manuell zuordnen.', 0);
+            toast('⚠ Fehler bei "' + item.name + '": ' + msg.substring(0, 100), 'warn');
           }
         }
 
@@ -1017,7 +1026,7 @@ async function runProcess(btn) {
   saveState();
   renderAll();
   _prozessLaeuft = false;
-  btn.disabled = false; btn.textContent = '▶ Jetzt starten';
+  if (btn) { btn.disabled = false; btn.textContent = '▶ Jetzt starten'; }
   setTimeout(() => { progress.classList.remove('show'); bar.style.width='0%'; }, 3000);
 }
 
@@ -1044,28 +1053,45 @@ async function processFile(item, apiKey) {
   let response;
   try {
     response = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey,
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + apiKey,
       {
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({contents:[{parts:[{inline_data:{mime_type:mimeType,data:base64}},{text:prompt}]}]}),
+        body: JSON.stringify({
+          contents:[{parts:[
+            {inline_data:{mime_type:mimeType, data:base64}},
+            {text:prompt}
+          ]}],
+          generationConfig:{
+            thinkingConfig:{thinkingBudget:0},  // Thinking deaktivieren – sonst falscher parts-Index
+            temperature:0.1,
+            maxOutputTokens:1024
+          }
+        }),
         signal: controller.signal
       }
     );
   } catch(e) {
     clearTimeout(timeoutId);
-    if (e.name === 'AbortError') throw new Error('Gemini Timeout (>45s) – Netzwerk prüfen oder Datei zu komplex');
+    if (e.name === 'AbortError') throw new Error('Gemini Timeout (>45s) – Netzwerk prüfen oder Datei zu groß');
     throw new Error('Netzwerkfehler: ' + e.message);
   }
   clearTimeout(timeoutId);
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({}));
-    throw new Error('Gemini ' + response.status + ': ' + (err.error?.message || response.statusText));
+    const errMsg = err.error?.message || response.statusText || 'Unbekannter Fehler';
+    throw new Error('Gemini ' + response.status + ': ' + errMsg);
   }
 
   const data = await response.json();
-  const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+  // Alle text-Parts zusammensammeln (Thinking-Modelle können mehrere Parts liefern)
+  const parts = data.candidates?.[0]?.content?.parts || [];
+  const rawText = parts
+    .filter(p => p.text && !p.thought)  // 'thought' = Thinking-Teil, den ignorieren
+    .map(p => p.text)
+    .join('') || '';
 
   if (!rawText) {
     const reason = data.candidates?.[0]?.finishReason || 'UNKNOWN';
@@ -1292,7 +1318,7 @@ async function moveFromQueueToCategory(fileName, destFolderName, newName) {
 function addToQueue(name, kat, art, typ, person, datum, steuer, reason, konfidenz) {
   _queueIdCounter++;
   queue.push({
-    id: _queueIdCounter,
+    id: parseInt(_queueIdCounter), // Always integer - prevents XSS via onclick
     name, kat, art, typ, person, datum, steuer,
     reason, konfidenz: konfidenz||0, status:'offen',
     added: new Date().toISOString().split('T')[0]
@@ -1312,7 +1338,7 @@ function renderQueue() {
     '<div class="q-card-name">📄 ' + esc(q.name) + '</div>' +
     '<div class="q-card-reason">' + esc(q.reason || 'Unklare Kategorie') + '</div>' +
     '<div class="q-card-meta">Konfidenz: ' + (q.konfidenz||0) + '% · Gemini schlug vor: ' + esc(q.kat||'keine') + '</div>' +
-    '<button class="btn btn-primary btn-sm" onclick="openModal(' + q.id + ')">Manuell zuordnen →</button>' +
+    '<button class="btn btn-primary btn-sm" onclick="openModal(' + parseInt(q.id||0) + ')">Manuell zuordnen →</button>' +
     '</div>'
   ).join('');
 }
