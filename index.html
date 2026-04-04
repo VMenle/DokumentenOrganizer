@@ -84,47 +84,49 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 
 /* ── MAIN APP ── */
 #mainScreen{flex-direction:column;}
-.app-header{border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:58px;flex-shrink:0;background:var(--surface);}
-.app-logo{font-family:var(--serif);font-size:20px;letter-spacing:-.3px;display:flex;align-items:center;gap:8px;}
-.app-logo-mark{font-size:18px;}
+.app-header{border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:60px;flex-shrink:0;background:var(--surface);}
+.app-logo{font-family:var(--serif);font-size:21px;letter-spacing:-.3px;display:flex;align-items:center;gap:8px;}
+.app-logo-mark{font-size:19px;}
 .app-logo span{color:var(--accent);}
 .header-right{display:flex;align-items:center;gap:14px;}
-.status-pill{display:flex;align-items:center;gap:6px;padding:5px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:100px;font-size:12px;color:var(--text2);}
-.status-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);}
+.status-pill{display:flex;align-items:center;gap:6px;padding:6px 14px;background:var(--surface2);border:1px solid var(--border2);border-radius:100px;font-size:13px;color:#b0c4d8;}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--text3);}
 .status-dot.ok{background:var(--accent2);}
 .status-dot.warn{background:var(--warn);animation:blink 1.5s infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
 .app-body{display:flex;flex:1;overflow:hidden;}
-.sidebar{width:210px;border-right:1px solid var(--border);padding:18px 10px;display:flex;flex-direction:column;gap:2px;flex-shrink:0;background:var(--surface);overflow-y:auto;}
-.nav-btn{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:all .15s;border:none;background:none;width:100%;text-align:left;}
-.nav-btn:hover{background:var(--surface2);color:var(--text);}
-.nav-btn.active{background:rgba(56,189,248,.1);color:var(--accent);font-weight:600;}
-.nav-icon{font-size:15px;width:18px;text-align:center;flex-shrink:0;}
-.nav-badge{margin-left:auto;background:var(--warn);color:#0c1219;padding:1px 7px;border-radius:100px;font-size:10px;font-weight:700;}
+.sidebar{width:220px;border-right:1px solid var(--border);padding:18px 10px;display:flex;flex-direction:column;gap:2px;flex-shrink:0;background:var(--surface);overflow-y:auto;}
+.nav-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;color:#b0c4d8;transition:all .15s;border:none;background:none;width:100%;text-align:left;}
+.nav-btn:hover{background:var(--surface2);color:#f0ebe5;}
+.nav-btn.active{background:rgba(212,130,10,.15);color:var(--accent);font-weight:700;}
+.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:var(--warn);color:#0d1f2d;padding:1px 8px;border-radius:100px;font-size:11px;font-weight:700;}
+.sidebar-divider{border:none;border-top:1px solid var(--border);margin:8px 0;}
+.sidebar-footer{margin-top:auto;padding-top:10px;}
 
 .main-content{flex:1;overflow-y:auto;padding:28px 32px;}
 .page{display:none;}
 .page.active{display:block;animation:fadeUp .2s ease;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-.page-hd{margin-bottom:22px;}
-.page-hd h1{font-size:21px;font-weight:700;margin-bottom:3px;}
-.page-hd p{color:var(--text2);font-size:13px;}
+.page-hd{margin-bottom:24px;}
+.page-hd h1{font-size:22px;font-weight:700;margin-bottom:4px;color:#f0ebe5;}
+.page-hd p{color:#8ba4b8;font-size:14px;}
 
 /* ── CARDS ── */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:14px;}
 .card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;}
-.card-title{font-weight:600;font-size:14px;}
+.card-title{font-weight:700;font-size:15px;color:#f0ebe5;}
 
 /* ── BUTTONS ── */
-.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-family:var(--body);font-size:13px;font-weight:600;transition:all .15s;white-space:nowrap;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-family:var(--body);font-size:14px;font-weight:600;transition:all .15s;white-space:nowrap;}
 .btn:disabled{opacity:.35;cursor:not-allowed;}
-.btn-primary{background:var(--accent);color:#0c1219;}
-.btn-primary:hover:not(:disabled){background:#7dd3fc;}
-.btn-success{background:var(--accent2);color:#0c1219;}
-.btn-success:hover:not(:disabled){background:#6ee7b7;}
-.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.btn-primary{background:var(--accent);color:#0d1f2d;font-weight:700;}
+.btn-primary:hover:not(:disabled){background:var(--accent-light);}
+.btn-success{background:var(--accent2);color:#0d1f2d;font-weight:700;}
+.btn-success:hover:not(:disabled){background:#3ab5a8;}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:#b0c4d8;}
 .btn-ghost:hover:not(:disabled){border-color:var(--text2);color:var(--text);}
 .btn-danger{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:var(--danger);}
 .btn-danger:hover:not(:disabled){background:rgba(248,113,113,.2);}
@@ -132,18 +134,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 .btn-sm{padding:5px 12px;font-size:12px;}
 
 /* ── FORMS ── */
-.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
-.fg label{font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--text3);text-transform:uppercase;}
-.fg input,.fg select{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border-color .15s;width:100%;}
-.fg input:focus,.fg select:focus{border-color:var(--accent);}
-.fg .hint{font-size:11px;color:var(--text3);font-family:var(--mono);}
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.fg label{font-size:12px;font-weight:700;letter-spacing:.05em;color:#b0c4d8;text-transform:uppercase;}
+.fg input,.fg select,.fg textarea{background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:10px 13px;color:#f0ebe5;font-family:var(--mono);font-size:14px;outline:none;transition:border-color .15s;width:100%;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);}
+.fg textarea{resize:vertical;min-height:70px;}
+.fg .hint{font-size:12px;color:#8ba4b8;font-family:var(--mono);}
 .fg .hint.ok{color:var(--accent2);}
 .fg .hint.err{color:var(--danger);}
 
 /* ── RUN PANEL ── */
-.run-panel{background:linear-gradient(135deg,rgba(56,189,248,.08),rgba(52,211,153,.06));border:1px solid rgba(56,189,248,.2);border-radius:12px;padding:20px 22px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
-.run-info h3{font-size:15px;font-weight:600;margin-bottom:3px;}
-.run-info p{font-size:12px;color:var(--text3);line-height:1.5;}
+.run-panel{background:linear-gradient(135deg,rgba(212,130,10,.08),rgba(42,157,143,.06));border:1px solid rgba(212,130,10,.2);border-radius:12px;padding:20px 22px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.run-info h3{font-size:16px;font-weight:700;margin-bottom:4px;color:#f0ebe5;}
+.run-info p{font-size:13px;color:#8ba4b8;line-height:1.5;}
 .run-actions{display:flex;gap:10px;flex-shrink:0;}
 
 /* ── PROGRESS ── */
@@ -217,6 +220,51 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 .lic-key{color:var(--text3);}
 .lic-val{color:var(--text);}
 
+
+/* ── DASHBOARD STATS ── */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;}
+.stat-num{font-family:var(--serif);font-size:36px;font-weight:400;color:var(--accent);line-height:1;margin-bottom:4px;}
+.stat-label{font-size:13px;color:#8ba4b8;font-weight:500;}
+.stat-sub{font-size:12px;color:var(--text3);margin-top:2px;}
+.dash-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.dash-section-title{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8ba4b8;margin-bottom:14px;}
+.dash-queue-empty{color:var(--accent2);font-size:14px;}
+.dash-log-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(42,64,96,.5);font-size:13px;}
+.dash-log-row:last-child{border-bottom:none;}
+.dash-log-name{color:#b0c4d8;font-family:var(--mono);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:300px;}
+.dash-log-date{color:var(--text3);font-size:11px;font-family:var(--mono);flex-shrink:0;margin-left:10px;}
+
+/* ── PRIVAT/UPGRADE BADGE ── */
+.privat-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(42,157,143,.12);border:1px solid rgba(42,157,143,.25);color:var(--accent2);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:.05em;}
+.upgrade-btn{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--amber-bg,rgba(212,130,10,.08));border:1px solid var(--amber-border,rgba(212,130,10,.22));border-radius:10px;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;margin-top:8px;width:100%;}
+.upgrade-btn:hover{background:rgba(212,130,10,.15);border-color:var(--accent);}
+
+/* ── KATEGORIE CARDS ── */
+.kat-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:10px;}
+.kat-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px;}
+.kat-card-name{font-weight:700;font-size:15px;color:#f0ebe5;}
+.kat-card-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
+.kat-badge{display:inline-flex;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.04em;}
+.kat-badge-secondary{background:rgba(212,130,10,.15);color:var(--accent);}
+.kat-badge-retention{background:rgba(42,157,143,.12);color:var(--accent2);}
+.kat-folder-path{font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:6px;}
+.kat-description{font-size:12px;color:#8ba4b8;line-height:1.5;margin-bottom:6px;}
+.kat-keywords{font-family:var(--mono);font-size:11px;color:var(--text3);}
+.kat-actions{display:flex;gap:6px;margin-top:10px;}
+
+/* ── ADD KAT FORM ── */
+.add-kat-form{background:var(--bg);border:1px dashed var(--border2);border-radius:12px;padding:18px;margin-top:12px;}
+.add-kat-form h3{font-size:14px;font-weight:700;color:#b0c4d8;margin-bottom:14px;}
+
+/* ── MISC ── */
+.empty{text-align:center;padding:40px;color:#4d6a80;font-size:14px;}
+.info-box{background:rgba(42,157,143,.07);border:1px solid rgba(42,157,143,.2);border-radius:10px;padding:13px 16px;margin-bottom:16px;font-size:13px;color:#8ba4b8;line-height:1.6;}
+.warn-box{background:rgba(240,165,48,.07);border:1px solid rgba(240,165,48,.2);border-radius:10px;padding:13px 16px;margin-bottom:16px;font-size:13px;color:var(--warn);line-height:1.6;}
+.sidebar-ext-links{padding:8px 4px;display:flex;flex-direction:column;gap:2px;}
+.sidebar-ext-link{font-size:12px;color:#4d6a80;text-decoration:none;padding:5px 12px;border-radius:6px;transition:color .15s;}
+.sidebar-ext-link:hover{color:#8ba4b8;}
+
 @media(max-width:680px){
   .form-grid,.gh-grid{grid-template-columns:1fr;}
   .sidebar{width:170px;}
@@ -277,6 +325,26 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 <!-- ══ MAIN APP ══ -->
 <div class="screen" id="mainScreen">
 
+  <!-- RECONNECT OVERLAY - shown on every page load until folder is connected -->
+  <div class="overlay active" id="reconnectOverlay" style="z-index:600;background:rgba(13,31,45,.92);backdrop-filter:blur(8px);">
+    <div style="background:#1a3347;border:1px solid rgba(212,130,10,.4);border-radius:20px;padding:36px 40px;max-width:440px;width:94vw;text-align:center;">
+      <div style="font-size:40px;margin-bottom:16px;">📁</div>
+      <div style="font-family:var(--serif);font-size:24px;color:#f0ebe5;margin-bottom:10px;">Arbeitsordner verbinden</div>
+      <div style="font-size:14px;color:#8ba4b8;line-height:1.6;margin-bottom:8px;">
+        Browser-Sicherheitsanforderung: Der Ordnerzugriff muss nach jedem Neustart einmalig bestätigt werden.<br><br>
+        <strong style="color:#f0ebe5;">Gespeicherter Ordner:</strong><br>
+        <span style="font-family:var(--mono);color:var(--accent);font-size:13px;" id="reconnectFolderName">–</span>
+      </div>
+      <div style="font-size:12px;color:#4d6a80;margin-bottom:24px;">Wähle denselben Ordner wie beim letzten Mal.</div>
+      <button onclick="reconnectFolder()" style="width:100%;padding:14px;border-radius:10px;background:var(--accent);color:#0d1f2d;border:none;font-family:var(--sans);font-size:15px;font-weight:800;cursor:pointer;margin-bottom:10px;transition:all .2s;">
+        📁 Ordner auswählen &amp; verbinden
+      </button>
+      <button onclick="skipReconnect()" style="width:100%;padding:10px;border-radius:10px;background:transparent;border:1px solid rgba(250,248,245,.1);color:#4d6a80;font-family:var(--sans);font-size:13px;cursor:pointer;">
+        Später verbinden (eingeschränkte Funktion)
+      </button>
+    </div>
+  </div>
+
   <!-- MODAL -->
   <div class="overlay" id="queueOverlay">
     <div class="modal">
@@ -326,40 +394,91 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 
   <div class="app-body">
     <div class="sidebar">
-      <button class="nav-btn active" onclick="showPage('queue',this)"><span class="nav-icon">⚠️</span>Warteschlange<span class="nav-badge" id="qBadge" style="display:none">0</span></button>
+      <button class="nav-btn active" onclick="showPage('dashboard',this)"><span class="nav-icon">🏠</span>Dashboard</button>
+      <button class="nav-btn" onclick="showPage('queue',this)"><span class="nav-icon">📥</span>Warteschlange<span class="nav-badge" id="qBadge" style="display:none">0</span></button>
       <button class="nav-btn" onclick="showPage('kategorien',this)"><span class="nav-icon">🗂</span>Kategorien</button>
       <button class="nav-btn" onclick="showPage('log',this)"><span class="nav-icon">📋</span>Protokoll</button>
       <button class="nav-btn" onclick="showPage('einstellungen',this)"><span class="nav-icon">⚙️</span>Einstellungen</button>
+      <div style="margin-top:auto;border-top:1px solid var(--border);padding-top:10px;margin-top:12px;">
+        <div class="sidebar-ext-links">
+          <a href="info.html" class="sidebar-ext-link" target="_blank">📖 Anleitung</a>
+          <a href="landing.html" class="sidebar-ext-link" target="_blank">🏷 Landingpage</a>
+          <a href="agb.html" class="sidebar-ext-link" target="_blank">⚖️ AGB &amp; Datenschutz</a>
+        </div>
+      </div>
     </div>
 
     <div class="main-content">
 
-      <!-- QUEUE PAGE -->
-      <div class="page active" id="page-queue">
+      <!-- DASHBOARD PAGE -->
+      <div class="page active" id="page-dashboard">
         <div class="run-panel">
           <div class="run-info">
             <h3>Dokumente verarbeiten</h3>
-            <p id="runInfo">Neue Dateien im Eingangsordner werden analysiert, umbenannt und verschoben.</p>
+            <p id="runInfo">Neue Dateien im _Eingang-Ordner werden von der KI analysiert, umbenannt und abgelegt.</p>
             <div class="progress-bar-wrap" id="progressWrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
           </div>
           <div class="run-actions">
             <button class="btn btn-primary" id="runBtn" onclick="runProcess(this)">▶ Jetzt starten</button>
           </div>
         </div>
+        <div class="dash-grid">
+          <div class="stat-card"><div class="stat-num" id="dash-month">0</div><div class="stat-label">Diesen Monat</div><div class="stat-sub">organisierte Dokumente</div></div>
+          <div class="stat-card"><div class="stat-num" id="dash-total">0</div><div class="stat-label">Insgesamt</div><div class="stat-sub">verarbeitete Dokumente</div></div>
+          <div class="stat-card"><div class="stat-num" id="dash-queue">0</div><div class="stat-label">Warteschlange</div><div class="stat-sub">warten auf Zuordnung</div></div>
+          <div class="stat-card"><div class="stat-num" id="dash-kats">0</div><div class="stat-label">Kategorien</div><div class="stat-sub">angelegt</div></div>
+        </div>
+        <div class="dash-section">
+          <div class="dash-section-title">Zuletzt verarbeitet</div>
+          <div id="dash-recent"><div style="color:var(--text3);font-size:13px;">Noch keine Dokumente verarbeitet</div></div>
+        </div>
+        <div class="dash-section" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#f0ebe5;margin-bottom:6px;">Nutzungsmodus: <span class="privat-badge">🔒 Privat</span></div>
+            <div style="font-size:13px;color:#4d6a80;line-height:1.6;">Für buchhalterische Ablage mit GoBD-konformen Aufbewahrungsfristen und Buchhaltungskategorien:</div>
+          </div>
+          <a href="upgrade.html" class="upgrade-btn" style="max-width:280px;text-decoration:none;">🏢 Zur geschäftlichen Nutzung →</a>
+        </div>
+      </div>
+
+      <!-- QUEUE PAGE -->
+      <div class="page" id="page-queue">
         <div class="page-hd"><h1>Warteschlange</h1><p>Dokumente die manuell zugeordnet werden müssen</p></div>
         <div id="queueContent"><div class="empty">✅ Keine offenen Dokumente</div></div>
       </div>
 
       <!-- KATEGORIEN PAGE -->
       <div class="page" id="page-kategorien">
-        <div class="page-hd"><h1>Kategorien</h1><p>Nur du legst Kategorien an – Gemini ordnet nur bekannten Kategorien zu</p></div>
-        <div class="warn-box">⚠️ Kategorien werden als Unterordner in deinem Arbeitsordner angelegt. Bitte keine Ordner manuell umbenennen oder löschen.</div>
+        <div class="page-hd"><h1>Kategorien</h1><p>Kategorien mit Beschreibungen helfen Gemini bei der Erkennung</p></div>
+        <div class="warn-box">📁 Kategorien werden als Unterordner angelegt. Ordnernamen nie manuell ändern. Beim Löschen einer Kategorie bleibt der Ordner auf dem Gerät erhalten.</div>
         <div class="card">
-          <div class="card-hd"><span class="card-title">Aktive Kategorien</span><button class="btn btn-primary btn-sm" onclick="toggleAddKat()">+ Hinzufügen</button></div>
-          <div class="kat-list" id="katList"><div class="empty">Noch keine Kategorien</div></div>
+          <div class="card-hd">
+            <span class="card-title">Aktive Kategorien</span>
+            <button class="btn btn-primary btn-sm" onclick="toggleAddKat()">+ Hinzufügen</button>
+          </div>
+          <div id="katList"><div class="empty">Noch keine Kategorien</div></div>
           <div class="add-kat-form" id="addKatForm" style="display:none;">
-            <div class="fg" style="margin:0;"><label>Kategoriename</label><input type="text" id="newKatName" placeholder="z.B. Rente, Fahrtenbuch"></div>
-            <button class="btn btn-success" style="margin-top:20px;" onclick="addKategorie()">OK</button>
+            <div style="font-size:14px;font-weight:700;color:#b0c4d8;margin-bottom:16px;">Neue Kategorie anlegen</div>
+            <div class="fg"><label>Name *</label><input type="text" id="newKatName" placeholder="z.B. Garantiebelege, Fahrtenbuch"></div>
+            <div class="fg"><label>Beschreibung (hilft Gemini)</label><textarea id="newKatDesc" placeholder="z.B. Alle Garantiescheine, Kaufbelege und Bedienungsanleitungen für Geräte und Haushaltsgegenstände"></textarea></div>
+            <div class="fg"><label>Schlüsselwörter (kommasepariert)</label><input type="text" id="newKatKeywords" placeholder="z.B. Garantie, Gewährleistung, Kaufbeleg, Quittung, Anleitung"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div class="fg">
+                <label>Aufbewahrungsfrist (Jahre, optional)</label>
+                <input type="number" id="newKatRetention" placeholder="z.B. 5" min="1" max="30" step="1">
+              </div>
+              <div>
+                <label class="fg" style="flex-direction:row;align-items:center;gap:10px;cursor:pointer;margin-bottom:0;">
+                  <input type="checkbox" id="newKatSecondary" style="width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;">
+                  <span style="font-size:12px;font-weight:700;letter-spacing:.05em;color:#b0c4d8;text-transform:uppercase;">Sekundärordner</span>
+                </label>
+                <div style="font-size:12px;color:#4d6a80;margin-top:6px;line-height:1.5;">Dokumente werden zusätzlich hierher kopiert wenn das Kriterium zutrifft (z.B. steuerrelevant).</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:8px;">
+              <button class="btn btn-success" onclick="addKategorie()">✓ Speichern</button>
+              <button class="btn btn-ghost" onclick="toggleAddKat()">Abbrechen</button>
+            </div>
           </div>
         </div>
       </div>
@@ -381,33 +500,35 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 
         <div class="card">
           <div class="card-title" style="margin-bottom:14px;">Arbeitsordner</div>
-          <div class="info-box" id="folderInfo">Kein Ordner verbunden</div>
+          <div class="info-box" id="folderInfo">Kein Ordner verbunden – bitte verbinden bevor du startest</div>
           <button class="btn btn-ghost" onclick="openFolder()">📁 Ordner neu verbinden</button>
         </div>
 
         <div class="card">
           <div class="card-title" style="margin-bottom:14px;">Gemini API Key</div>
-          <div class="fg"><label>Neuer Key (leer lassen um bestehenden zu behalten)</label><input type="password" id="newApiKey" placeholder="AIza..."></div>
+          <div class="fg"><label>Neuer Key (leer lassen um bestehenden zu behalten)</label><input type="password" id="newApiKey" placeholder="AIza..." autocomplete="new-password"></div>
           <button class="btn btn-primary btn-sm" onclick="updateApiKey()">Speichern</button>
-          <div class="hint" id="apiKeyHint" style="margin-top:8px;font-size:11px;color:var(--text3);font-family:var(--mono);"></div>
+          <div id="apiKeyHint" style="margin-top:8px;font-size:12px;color:#8ba4b8;font-family:var(--mono);"></div>
         </div>
 
         <div class="card">
-          <div class="card-title" style="margin-bottom:14px;">Steuer-Ordner</div>
-          <div class="info-box">Steuerlich relevante Dokumente werden zusätzlich in den Kategorie-Ordner „Steuer" kopiert. Stelle sicher dass diese Kategorie angelegt ist.</div>
-        </div>
-
-        <div class="card">
-          <div class="card-title" style="margin-bottom:14px;">Protokoll</div>
-          <p style="font-size:13px;color:var(--text2);margin-bottom:12px;">Aktuell <span id="logCount">0</span> Einträge gespeichert (max. 200).</p>
+          <div class="card-title" style="margin-bottom:10px;">Protokoll</div>
+          <p style="font-size:13px;color:#8ba4b8;margin-bottom:12px;">Aktuell <span id="logCount" style="color:#f0ebe5;font-weight:700;">0</span> Einträge gespeichert (max. 200).</p>
           <button class="btn btn-danger btn-sm" onclick="clearLog()">🗑 Protokoll leeren</button>
         </div>
 
         <div class="card">
-          <div class="card-title" style="margin-bottom:14px;">Lizenz</div>
+          <div class="card-title" style="margin-bottom:10px;">Lizenz</div>
           <div class="lic-info" id="licInfo">–</div>
           <button class="btn btn-ghost btn-sm" style="margin-top:12px;" onclick="deactivateLicense()">Lizenz entfernen</button>
         </div>
+
+        <div class="card" style="border-color:rgba(212,130,10,.25);">
+          <div class="card-title" style="margin-bottom:10px;color:var(--accent);">🏢 Geschäftliche Nutzung</div>
+          <p style="font-size:13px;color:#8ba4b8;margin-bottom:12px;">Du nutzt aktuell den <strong style="color:#f0ebe5;">Privat-Modus</strong>. Für geschäftliche Dokumentenablage mit GoBD-konformen Aufbewahrungsfristen und vordefinierten Buchhaltungskategorien:</p>
+          <a href="upgrade.html" class="upgrade-btn" style="text-decoration:none;">🏢 Zur geschäftlichen Nutzung erweitern →</a>
+        </div>
+
       </div>
 
     </div>
@@ -494,10 +615,55 @@ function getLicenseData() {
 
 // ══════════════════════════════════════════════
 // APP STATE – sicher initialisieren
+// Kategorie-Struktur: {name, folderName, description, keywords, isSecondary, retentionYears}
 // ══════════════════════════════════════════════
 let workspaceHandle = null;
 let eingangsHandle = null;
-let _queueIdCounter = Date.now(); // Eindeutige IDs ohne Kollisionsrisiko
+let _queueIdCounter = Date.now();
+
+// Standard-Kategorien (Privat-Modus)
+const DEFAULT_CATEGORIES = [
+  {
+    name: 'Wohnen',
+    folderName: 'Wohnen',
+    description: 'Dokumente rund um Wohnung und Haus: Mietvertrag, Nebenkosten, Strom, Gas, Wasser, Internet, Hausratversicherung, Handwerkerrechnungen',
+    keywords: 'Miete, Nebenkosten, Strom, Gas, Wasser, Internet, Hausrat, Handwerker, Heizung, Renovierung, Mietvertrag, Betriebskosten',
+    isSecondary: false,
+    retentionYears: null
+  },
+  {
+    name: 'Arbeit',
+    folderName: 'Arbeit',
+    description: 'Berufliche Dokumente: Gehaltsabrechnungen, Arbeitsvertrag, Lohnsteuer, Sozialversicherung, Rentenversicherung, Arbeitsbescheinigungen',
+    keywords: 'Gehalt, Lohn, Gehaltsabrechnung, Arbeitsvertrag, Lohnsteuer, Sozialversicherung, Rentenversicherung, Arbeitsbescheinigung, Kündigung',
+    isSecondary: false,
+    retentionYears: null
+  },
+  {
+    name: 'Versicherungen',
+    folderName: 'Versicherungen',
+    description: 'Alle Versicherungsdokumente: Kranken-, Haftpflicht-, KFZ-, Lebens-, Berufsunfähigkeitsversicherung, Policen, Beitragsbescheide',
+    keywords: 'Versicherung, Police, Beitrag, KFZ, Haftpflicht, Krankenversicherung, Lebensversicherung, Berufsunfähigkeit, Unfall',
+    isSecondary: false,
+    retentionYears: null
+  },
+  {
+    name: 'Bank & Finanzen',
+    folderName: 'Bank',
+    description: 'Kontoauszüge, Kreditverträge, Sparpläne, Investmentdepots, Steuerbescheide zur Kapitalertragsteuer, Bankkorrespondenz',
+    keywords: 'Kontoauszug, Kreditvertrag, Depot, Investmentfonds, Aktien, ETF, Sparbuch, Überweisung, Darlehen, Hypothek',
+    isSecondary: false,
+    retentionYears: null
+  },
+  {
+    name: 'Steuer',
+    folderName: 'Steuer',
+    description: 'Alle Dokumente die für die jährliche Steuererklärung relevant sind: Spendenquittungen, Handwerkerrechnungen, Werbungskosten, Riester, Vorsorgeaufwendungen',
+    keywords: 'Steuererklärung, Finanzamt, Steuerbescheid, Spendenquittung, Werbungskosten, Riester, Sonderausgaben, Handwerkerrechnung steuerlich',
+    isSecondary: true,
+    retentionYears: 10
+  }
+];
 
 function _loadSafe(key, fallback) {
   try {
@@ -512,7 +678,14 @@ function _loadSafe(key, fallback) {
 
 let queue      = _loadSafe('ds_queue', []);
 let log        = _loadSafe('ds_log', []);
-let categories = _loadSafe('ds_categories', []);
+let categories = _loadSafe('ds_categories', null);
+
+// Erste Nutzung: Default-Kategorien setzen
+if (!categories || categories.length === 0) {
+  categories = DEFAULT_CATEGORIES;
+  try { localStorage.setItem('ds_categories', JSON.stringify(categories)); } catch(e) {}
+}
+
 let currentQueueIndex = 0;
 let currentFileExt = '';
 
@@ -545,13 +718,13 @@ function saveState() {
 // ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
-function initApp() {
+async function initApp() {
   const lic = localStorage.getItem('ds_license');
   if (!lic) { showScreen('licenseScreen'); return; }
   const result = validateLicense(lic);
   if (!result || !result.valid) {
     localStorage.removeItem('ds_license');
-    localStorage.removeItem('ds_lic_data'); // Konsistent bereinigen
+    localStorage.removeItem('ds_lic_data');
     showScreen('licenseScreen'); return;
   }
   const apiKey = localStorage.getItem('ds_api_key');
@@ -560,13 +733,50 @@ function initApp() {
   showScreen('mainScreen');
   renderAll();
   updateLicInfo();
-  // Hinweis: Ordner muss nach jedem Reload neu verbunden werden
-  const folderName = localStorage.getItem('ds_workspace_name');
-  if (folderName) {
-    document.getElementById('appStatusDot').className = 'status-dot warn';
-    document.getElementById('appStatusText').textContent = 'Ordner neu verbinden';
-    setTimeout(() => toast('📁 Bitte Arbeitsordner neu verbinden bevor du startest (📁-Symbol oben rechts)', 'warn'), 800);
+  renderDashboard();
+  showPage('dashboard', document.querySelector('.nav-btn'));
+
+  // Show reconnect overlay with folder name
+  const savedFolder = localStorage.getItem('ds_workspace_name');
+  const nameEl = document.getElementById('reconnectFolderName');
+  if (nameEl && savedFolder) nameEl.textContent = '📂 ' + savedFolder;
+
+  document.getElementById('appStatusDot').className = 'status-dot warn';
+  document.getElementById('appStatusText').textContent = 'Ordner verbinden';
+}
+
+async function reconnectFolder() {
+  try {
+    const saved = localStorage.getItem('ds_workspace_name');
+    const handle = await window.showDirectoryPicker({mode:'readwrite'});
+    if (saved && handle.name !== saved) {
+      if (!confirm('Ausgewählter Ordner "' + handle.name + '" unterscheidet sich vom gespeicherten "' + saved + '". Trotzdem verwenden?')) return;
+    }
+    workspaceHandle = handle;
+    localStorage.setItem('ds_workspace_name', handle.name);
+    eingangsHandle = await handle.getDirectoryHandle('_Eingang', {create:true});
+    // Kategorieordner anlegen falls nötig
+    for (const kat of categories) {
+      try { await handle.getDirectoryHandle(kat.folderName, {create:true}); } catch(e) {}
+    }
+    // Hide overlay
+    document.getElementById('reconnectOverlay').classList.remove('active');
+    document.getElementById('appStatusDot').className = 'status-dot ok';
+    document.getElementById('appStatusText').textContent = 'Bereit · ' + handle.name;
+    const fi = document.getElementById('folderInfo');
+    if (fi) fi.textContent = '✓ Verbunden: ' + handle.name;
+    toast('✓ Ordner verbunden: ' + handle.name, 'ok');
+    renderDashboard();
+  } catch(e) {
+    if (e.name !== 'AbortError') toast('Fehler: ' + e.message, 'err');
   }
+}
+
+function skipReconnect() {
+  document.getElementById('reconnectOverlay').classList.remove('active');
+  document.getElementById('appStatusDot').className = 'status-dot warn';
+  document.getElementById('appStatusText').textContent = 'Kein Ordner';
+  toast('⚠ Ohne Ordner können keine Dokumente verarbeitet werden', 'warn');
 }
 
 function showScreen(id) {
@@ -653,16 +863,21 @@ async function openFolder() {
     const handle = await window.showDirectoryPicker({mode:'readwrite'});
     const saved = localStorage.getItem('ds_workspace_name');
     if (saved && handle.name !== saved) {
-      if (!confirm('Der ausgewählte Ordner ("' + handle.name + '") unterscheidet sich vom gespeicherten ("' + saved + '"). Trotzdem verwenden?')) return;
+      if (!confirm('Ausgewählter Ordner "' + handle.name + '" unterscheidet sich vom gespeicherten "' + saved + '". Trotzdem verwenden?')) return;
     }
     workspaceHandle = handle;
     localStorage.setItem('ds_workspace_name', handle.name);
     eingangsHandle = await handle.getDirectoryHandle('_Eingang', {create:true});
-    const _fi = document.getElementById('folderInfo');
-    if (_fi) _fi.textContent = '✓ Verbunden: ' + handle.name;
+    // Kategorieordner anlegen falls nötig
+    for (const kat of categories) {
+      try { await handle.getDirectoryHandle(kat.folderName, {create:true}); } catch(e) {}
+    }
+    const fi = document.getElementById('folderInfo');
+    if (fi) fi.textContent = '✓ Verbunden: ' + handle.name;
     document.getElementById('appStatusDot').className = 'status-dot ok';
-    document.getElementById('appStatusText').textContent = 'Bereit';
+    document.getElementById('appStatusText').textContent = 'Bereit · ' + handle.name;
     toast('✓ Ordner verbunden: ' + handle.name, 'ok');
+    renderDashboard();
   } catch(e) {
     if (e.name !== 'AbortError') toast('Fehler: ' + e.message, 'err');
   }
@@ -682,8 +897,10 @@ async function ensureWorkspace() {
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
   if (btn) btn.classList.add('active');
+  if (id === 'dashboard') renderDashboard();
 }
 
 // ══════════════════════════════════════════════
@@ -722,9 +939,9 @@ async function runProcess(btn) {
       info.textContent = 'Keine neuen Dokumente im Eingangsordner "_Eingang".';
       toast('Eingangsordner ist leer', 'info');
     } else {
-      const steuerKatExists = categories.some(k => k.name.toLowerCase() === 'steuer');
-      if (!steuerKatExists) {
-        toast('Hinweis: Keine "Steuer"-Kategorie angelegt – steuerrelevante Dokumente werden nicht doppelt abgelegt', 'warn');
+      const sekundaerExists = categories.some(k => k.isSecondary);
+      if (!sekundaerExists) {
+        toast('Hinweis: Kein Sekundärordner angelegt – steuerrelevante Dokumente werden nicht doppelt abgelegt', 'warn');
       }
 
       info.textContent = files.length + ' Dokument(e) gefunden – analysiere...';
@@ -807,8 +1024,7 @@ async function processFile(item, apiKey) {
   const mimeType = file.type || guessMime(name);
 
   // Gemini analysieren – mit Timeout-Schutz (45 Sekunden)
-  const katNamen = categories.map(k => k.name);
-  const prompt = buildPrompt(katNamen);
+  const prompt = buildPrompt(categories);
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 45000);
@@ -816,7 +1032,7 @@ async function processFile(item, apiKey) {
   let response;
   try {
     response = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + apiKey,
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey,
       {
         method:'POST',
         headers:{'Content-Type':'application/json'},
@@ -881,12 +1097,12 @@ async function processFile(item, apiKey) {
     // Automatisch ablegen
     const tatsaecklicherName = await moveFile(handle, eingangsHandle, katMatch.folderName, newName);
 
-    // Steuer-Kopie (nur wenn Steuer-Kategorie existiert)
+    // Sekundärordner-Kopie: Kopie in alle isSecondary-Kategorien wenn steuerrelevant
     if (steuer) {
-      const steuerKat = categories.find(k => k.name.toLowerCase() === 'steuer');
-      if (steuerKat && steuerKat.folderName !== katMatch.folderName) {
-        try { await sicherKopieren(katMatch.folderName, steuerKat.folderName, tatsaecklicherName); }
-        catch(e) { console.warn('Steuer-Kopie fehlgeschlagen:', e.message); toast('Steuer-Kopie fehlgeschlagen (Datei ist aber abgelegt): ' + e.message, 'warn'); }
+      const sekundaerKats = categories.filter(k => k.isSecondary && k.folderName !== katMatch.folderName);
+      for (const sKat of sekundaerKats) {
+        try { await sicherKopieren(katMatch.folderName, sKat.folderName, tatsaecklicherName); }
+        catch(e) { console.warn('Sekundärkopie in "' + sKat.name + '" fehlgeschlagen:', e.message); toast('Kopie in "' + sKat.name + '" fehlgeschlagen: ' + e.message, 'warn'); }
       }
     }
 
@@ -1184,12 +1400,10 @@ async function resolveItem() {
     const finalName = await moveFromQueueToCategory(item.name, folderName, newName);
 
     if (steuer) {
-      const steuerKat = categories.find(k => k.name.toLowerCase() === 'steuer');
-      if (steuerKat && steuerKat.folderName !== folderName) {
-        try { await sicherKopieren(folderName, steuerKat.folderName, finalName); }
-        catch(e) { toast('Steuer-Kopie fehlgeschlagen (Datei ist aber abgelegt): ' + e.message, 'warn'); }
-      } else if (!steuerKat) {
-        toast('Hinweis: Keine "Steuer"-Kategorie vorhanden – keine Kopie erstellt', 'warn');
+      const sekundaerKats = categories.filter(k => k.isSecondary && k.folderName !== folderName);
+      for (const sKat of sekundaerKats) {
+        try { await sicherKopieren(folderName, sKat.folderName, finalName); }
+        catch(e) { toast('Kopie in "' + sKat.name + '" fehlgeschlagen: ' + e.message, 'warn'); }
       }
     }
 
@@ -1218,14 +1432,30 @@ async function resolveItem() {
 // ══════════════════════════════════════════════
 function renderKategorien() {
   const list = document.getElementById('katList');
-  if (categories.length === 0) { list.innerHTML = '<div class="empty">Noch keine Kategorien angelegt</div>'; return; }
-  list.innerHTML = categories.map((k,i) =>
-    '<div class="kat-item">' +
-    '<span class="kat-name">📁 ' + esc(k.name) + '</span>' +
-    '<span class="kat-folder">' + esc(k.folderName) + '</span>' +
-    '<button class="btn btn-danger btn-sm" onclick="deleteKategorie(' + i + ')">Löschen</button>' +
-    '</div>'
-  ).join('');
+  if (categories.length === 0) {
+    list.innerHTML = '<div class="empty">Noch keine Kategorien angelegt.<br>Standard-Kategorien wurden nicht geladen – bitte Seite neu laden.</div>';
+    return;
+  }
+  list.innerHTML = categories.map((k,i) => {
+    const badges = [];
+    if (k.isSecondary) badges.push('<span class="kat-badge kat-badge-secondary">📋 Sekundärordner</span>');
+    if (k.retentionYears) badges.push('<span class="kat-badge kat-badge-retention">🕐 ' + k.retentionYears + ' Jahre Aufbewahrung</span>');
+
+    return '<div class="kat-card">' +
+      '<div class="kat-card-header">' +
+        '<div>' +
+          '<div class="kat-card-name">📁 ' + esc(k.name) + '</div>' +
+          (badges.length > 0 ? '<div class="kat-card-badges">' + badges.join('') + '</div>' : '') +
+        '</div>' +
+        '<div class="kat-actions">' +
+          '<button class="btn btn-danger btn-sm" onclick="deleteKategorie(' + i + ')">Entfernen</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="kat-folder-path">📂 ' + esc(k.folderName) + '</div>' +
+      (k.description ? '<div class="kat-description">' + esc(k.description) + '</div>' : '') +
+      (k.keywords ? '<div class="kat-keywords">🔑 ' + esc(k.keywords) + '</div>' : '') +
+    '</div>';
+  }).join('');
 }
 
 function toggleAddKat() {
@@ -1235,24 +1465,39 @@ function toggleAddKat() {
 }
 
 async function addKategorie() {
-  const name = document.getElementById('newKatName').value.trim();
+  const name = (document.getElementById('newKatName').value || '').trim();
+  const description = (document.getElementById('newKatDesc').value || '').trim();
+  const keywords = (document.getElementById('newKatKeywords').value || '').trim();
+  const retentionRaw = (document.getElementById('newKatRetention').value || '').trim();
+  const isSecondary = document.getElementById('newKatSecondary').checked;
+  const retentionYears = retentionRaw ? parseInt(retentionRaw) : null;
+
   if (!name) { toast('Bitte Kategoriename eingeben', 'warn'); return; }
   if (categories.some(k => k.name.toLowerCase() === name.toLowerCase())) { toast('Kategorie "' + name + '" existiert bereits', 'warn'); return; }
   const folderName = cleanPart(name, 50);
   if (!folderName) { toast('Ungültiger Kategoriename – bitte nur normale Buchstaben verwenden', 'err'); return; }
-  categories.push({name, folderName});
+  if (retentionYears !== null && (isNaN(retentionYears) || retentionYears < 1)) { toast('Aufbewahrungsfrist muss mindestens 1 Jahr sein', 'warn'); return; }
+
+  categories.push({name, folderName, description, keywords, isSecondary, retentionYears});
+
   if (workspaceHandle) {
     try {
       await workspaceHandle.getDirectoryHandle(folderName, {create:true});
-      toast('✓ Kategorie "' + name + '" angelegt (Ordner erstellt)', 'ok');
+      toast('✓ Kategorie "' + name + '" angelegt', 'ok');
     } catch(e) {
-      toast('Kategorie gespeichert, aber Ordner konnte nicht angelegt werden: ' + e.message + '. Bitte Ordner neu verbinden.', 'warn');
+      toast('Kategorie gespeichert, Ordner konnte nicht angelegt werden: ' + e.message, 'warn');
     }
   } else {
-    toast('Kategorie gespeichert. Verbinde den Ordner damit der Unterordner angelegt wird.', 'warn');
+    toast('Kategorie gespeichert. Ordner verbinden damit der Unterordner angelegt wird.', 'warn');
   }
+
   saveState(); renderAll();
+  // Reset form
   document.getElementById('newKatName').value = '';
+  document.getElementById('newKatDesc').value = '';
+  document.getElementById('newKatKeywords').value = '';
+  document.getElementById('newKatRetention').value = '';
+  document.getElementById('newKatSecondary').checked = false;
   document.getElementById('addKatForm').style.display = 'none';
 }
 
@@ -1356,27 +1601,99 @@ function renderAll() {
   renderKategorien();
   renderLog();
   updateLicInfo();
+  renderDashboard();
+}
+
+function renderDashboard() {
+  // Stats
+  const now = new Date();
+  const thisMonth = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  const monthCount = log.filter(l => (l.datum||'').startsWith(thisMonth.replace('-',''))||
+    (l.datum||'').substring(0,6) === thisMonth.replace('-','')).length;
+  // Better month filter using date string
+  const monthLog = log.filter(l => {
+    if (!l.datum) return false;
+    const d = String(l.datum);
+    if (d.length >= 6) {
+      const yr = d.substring(0,4);
+      const mo = d.substring(4,6);
+      return (yr + '-' + mo) === thisMonth;
+    }
+    return false;
+  });
+
+  const qOpen = queue.filter(q => q.status === 'offen').length;
+
+  const numEl = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  numEl('dash-month', monthLog.length);
+  numEl('dash-total', log.length);
+  numEl('dash-queue', qOpen);
+  numEl('dash-kats', categories.length);
+
+  // Recent log entries
+  const recentEl = document.getElementById('dash-recent');
+  if (recentEl) {
+    if (log.length === 0) {
+      recentEl.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:8px 0;">Noch keine Dokumente verarbeitet</div>';
+    } else {
+      const recent = log.slice(0,5);
+      recentEl.innerHTML = recent.map(l =>
+        '<div class="dash-log-row">' +
+        '<span class="dash-log-name" title="' + esc(l.newName||'') + '">' + esc(l.newName||'–') + '</span>' +
+        '<span style="display:flex;gap:8px;align-items:center;flex-shrink:0;">' +
+          '<span style="font-size:11px;color:var(--text3);font-family:var(--mono);">' + esc(l.kategorie||'–') + '</span>' +
+          '<span class="tag ' + (l.typ==='Manuell'?'tag-manual':'tag-auto') + '">' + esc(l.typ||'–') + '</span>' +
+        '</span>' +
+        '</div>'
+      ).join('');
+    }
+  }
+
+  // Update folder info in settings
+  const folderInfoEl = document.getElementById('folderInfo');
+  if (folderInfoEl) {
+    const fn = localStorage.getItem('ds_workspace_name');
+    if (workspaceHandle) {
+      folderInfoEl.textContent = '✓ Verbunden: ' + (workspaceHandle.name || fn || '–');
+    } else if (fn) {
+      folderInfoEl.textContent = '⚠ Gespeichert: ' + fn + ' – bitte oben neu verbinden';
+    } else {
+      folderInfoEl.textContent = 'Kein Ordner verbunden';
+    }
+  }
 }
 
 // ══════════════════════════════════════════════
 // HELPERS
 // ══════════════════════════════════════════════
-function buildPrompt(katNamen) {
+function buildPrompt(cats) {
+  // Kategoriebeschreibungen für Gemini aufbereiten
+  const katDetails = cats.map(k => {
+    let detail = '- ' + k.name;
+    if (k.description) detail += ': ' + k.description;
+    if (k.keywords) detail += ' [Schlüsselwörter: ' + k.keywords + ']';
+    if (k.isSecondary) detail += ' [SEKUNDÄRORDNER – erhält Kopien wenn steuerrelevant oder kriterienzutreffend]';
+    return detail;
+  }).join('\n');
+
+  const katNamen = cats.map(k => k.name);
+
   return 'Du bist ein Dokumenten-Kategorisierungsassistent für deutsche Privatunterlagen.\n\n' +
-    'Verfügbare Kategorien (NUR diese verwenden): ' + (katNamen.length > 0 ? katNamen.join(', ') : 'keine – kategorie leer lassen') + '\n\n' +
+    'Verfügbare Kategorien (NUR diese verwenden):\n' +
+    (katDetails || 'keine – kategorie leer lassen') + '\n\n' +
     'Namenskonvention: YYYYMMDD_Kategorie_Art_Dokumenttyp_Person\n\n' +
     'Felder:\n' +
-    '- kategorie: EXAKT aus der Liste oder leer\n' +
-    '- art: Unterkategorie (KFZ, Leben, Haftpflicht, Strom, Wasser, Gehalt usw.)\n' +
-    '- dokumenttyp: Rechnung, Versicherungsschein, Mahnung, Vertrag, Bescheid, Kontoauszug, Quittung, Garantiebeleg, Anleitung\n' +
+    '- kategorie: EXAKT ein Name aus der obigen Liste oder leer wenn keine passt\n' +
+    '- art: Unterkategorie (KFZ, Leben, Haftpflicht, Strom, Wasser, Gehalt, Kranken usw.)\n' +
+    '- dokumenttyp: Rechnung, Versicherungsschein, Mahnung, Vertrag, Bescheid, Kontoauszug, Quittung, Garantiebeleg, Anleitung, Gehaltsabrechnung\n' +
     '- person: Empfänger oder Absender falls erkennbar; sonst leer\n' +
-    '- datum: Belegdatum (YYYYMMDD) – NICHT heute\n' +
-    '- steuer_relevant: true wenn steuerlich absetzbar\n' +
-    '- konfidenz: 0–100\n' +
-    '- unklar_grund: nur wenn konfidenz < 70 oder kategorie leer\n\n' +
-    'Nur ASCII + Bindestrich in Textfeldern. Keine neue Kategorie erfinden.\n\n' +
-    'Antworte NUR mit diesem JSON:\n' +
-    '{"kategorie":"","art":"","dokumenttyp":"","person":"","datum":"","steuer_relevant":false,"steuer_begruendung":"","konfidenz":0,"unklar_grund":""}';
+    '- datum: Belegdatum (YYYYMMDD) – NICHT heute – aus dem Dokument lesen\n' +
+    '- steuer_relevant: true wenn das Dokument für die Steuererklärung relevant ist\n' +
+    '- konfidenz: 0–100 (wie sicher bist du mit der Kategorisierung)\n' +
+    '- unklar_grund: Begründung wenn konfidenz < 70 oder keine Kategorie passt\n\n' +
+    'Regeln: Nur ASCII + Bindestrich in Textfeldern. Keine neue Kategorie erfinden. Wenn keine Kategorie passt, kategorie leer lassen und konfidenz niedrig setzen.\n\n' +
+    'Antworte NUR mit diesem JSON – kein Kommentar, kein Markdown:\n' +
+    '{"kategorie":"","art":"","dokumenttyp":"","person":"","datum":"","steuer_relevant":false,"konfidenz":0,"unklar_grund":""}';
 }
 
 function buildName(datum, katName, art, typ, person, ext) {
