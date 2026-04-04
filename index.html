@@ -325,24 +325,24 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
 <!-- ══ MAIN APP ══ -->
 <div class="screen" id="mainScreen">
 
-  <!-- RECONNECT OVERLAY - shown on every page load until folder is connected -->
-  <div class="overlay active" id="reconnectOverlay" style="z-index:600;background:rgba(13,31,45,.92);backdrop-filter:blur(8px);">
-    <div style="background:#1a3347;border:1px solid rgba(212,130,10,.4);border-radius:20px;padding:36px 40px;max-width:440px;width:94vw;text-align:center;">
-      <div style="font-size:40px;margin-bottom:16px;">📁</div>
-      <div style="font-family:var(--serif);font-size:24px;color:#f0ebe5;margin-bottom:10px;">Arbeitsordner verbinden</div>
-      <div style="font-size:14px;color:#8ba4b8;line-height:1.6;margin-bottom:8px;">
-        Browser-Sicherheitsanforderung: Der Ordnerzugriff muss nach jedem Neustart einmalig bestätigt werden.<br><br>
-        <strong style="color:#f0ebe5;">Gespeicherter Ordner:</strong><br>
-        <span style="font-family:var(--mono);color:var(--accent);font-size:13px;" id="reconnectFolderName">–</span>
-      </div>
-      <div style="font-size:12px;color:#4d6a80;margin-bottom:24px;">Wähle denselben Ordner wie beim letzten Mal.</div>
-      <button onclick="reconnectFolder()" style="width:100%;padding:14px;border-radius:10px;background:var(--accent);color:#0d1f2d;border:none;font-family:var(--sans);font-size:15px;font-weight:800;cursor:pointer;margin-bottom:10px;transition:all .2s;">
-        📁 Ordner auswählen &amp; verbinden
-      </button>
-      <button onclick="skipReconnect()" style="width:100%;padding:10px;border-radius:10px;background:transparent;border:1px solid rgba(250,248,245,.1);color:#4d6a80;font-family:var(--sans);font-size:13px;cursor:pointer;">
-        Später verbinden (eingeschränkte Funktion)
-      </button>
-    </div>
+  <!-- RECONNECT BANNER – schmal, ein Klick, öffnet direkt den Ordner-Picker -->
+  <div id="reconnectBanner" style="
+    display:none; position:sticky; top:0; z-index:500;
+    background:#d4820a; padding:9px 20px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  ">
+    <span style="font-size:13px;font-weight:600;color:#0d1f2d;">
+      📁 Arbeitsordner verbinden – <span id="reconnectFolderName" style="font-family:var(--mono);"></span>
+    </span>
+    <button onclick="reconnectFolder()" style="
+      background:#0d1f2d;color:#f0a530;border:none;border-radius:7px;
+      padding:6px 16px;font-size:13px;font-weight:700;cursor:pointer;
+      font-family:var(--sans);white-space:nowrap;flex-shrink:0;
+    ">Ordner wählen →</button>
+    <button onclick="skipReconnect()" style="
+      background:transparent;border:none;color:rgba(13,31,45,.5);
+      font-size:18px;cursor:pointer;line-height:1;padding:0 4px;flex-shrink:0;
+    " title="Schließen">×</button>
   </div>
 
   <!-- MODAL -->
@@ -684,6 +684,21 @@ let categories = _loadSafe('ds_categories', null);
 if (!categories || categories.length === 0) {
   categories = DEFAULT_CATEGORIES;
   try { localStorage.setItem('ds_categories', JSON.stringify(categories)); } catch(e) {}
+} else {
+  // Migration: Fehlende Felder in bestehenden Kategorien ergänzen
+  let migrated = false;
+  categories = categories.map(k => {
+    if (typeof k.isSecondary === 'undefined') { k.isSecondary = false; migrated = true; }
+    if (typeof k.description === 'undefined') { k.description = ''; migrated = true; }
+    if (typeof k.keywords === 'undefined') { k.keywords = ''; migrated = true; }
+    if (typeof k.retentionYears === 'undefined') { k.retentionYears = null; migrated = true; }
+    // Steuer-Kategorie automatisch als Sekundärordner markieren wenn noch nicht gesetzt
+    if (k.name.toLowerCase() === 'steuer' && !k.isSecondary) { k.isSecondary = true; migrated = true; }
+    return k;
+  });
+  if (migrated) {
+    try { localStorage.setItem('ds_categories', JSON.stringify(categories)); } catch(e) {}
+  }
 }
 
 let currentQueueIndex = 0;
@@ -736,10 +751,12 @@ async function initApp() {
   renderDashboard();
   showPage('dashboard', document.querySelector('.nav-btn'));
 
-  // Show reconnect overlay with folder name
+  // Show slim reconnect banner
   const savedFolder = localStorage.getItem('ds_workspace_name');
+  const banner = document.getElementById('reconnectBanner');
   const nameEl = document.getElementById('reconnectFolderName');
-  if (nameEl && savedFolder) nameEl.textContent = '📂 ' + savedFolder;
+  if (banner) banner.style.display = 'flex';
+  if (nameEl && savedFolder) nameEl.textContent = savedFolder;
 
   document.getElementById('appStatusDot').className = 'status-dot warn';
   document.getElementById('appStatusText').textContent = 'Ordner verbinden';
@@ -747,36 +764,33 @@ async function initApp() {
 
 async function reconnectFolder() {
   try {
-    const saved = localStorage.getItem('ds_workspace_name');
     const handle = await window.showDirectoryPicker({mode:'readwrite'});
-    if (saved && handle.name !== saved) {
-      if (!confirm('Ausgewählter Ordner "' + handle.name + '" unterscheidet sich vom gespeicherten "' + saved + '". Trotzdem verwenden?')) return;
-    }
+    // Kein Confirm-Dialog – einfach den gewählten Ordner verwenden
     workspaceHandle = handle;
     localStorage.setItem('ds_workspace_name', handle.name);
     eingangsHandle = await handle.getDirectoryHandle('_Eingang', {create:true});
-    // Kategorieordner anlegen falls nötig
     for (const kat of categories) {
       try { await handle.getDirectoryHandle(kat.folderName, {create:true}); } catch(e) {}
     }
-    // Hide overlay
-    document.getElementById('reconnectOverlay').classList.remove('active');
+    // Banner ausblenden
+    const banner = document.getElementById('reconnectBanner');
+    if (banner) banner.style.display = 'none';
     document.getElementById('appStatusDot').className = 'status-dot ok';
     document.getElementById('appStatusText').textContent = 'Bereit · ' + handle.name;
     const fi = document.getElementById('folderInfo');
     if (fi) fi.textContent = '✓ Verbunden: ' + handle.name;
-    toast('✓ Ordner verbunden: ' + handle.name, 'ok');
+    toast('✓ Verbunden: ' + handle.name, 'ok');
     renderDashboard();
   } catch(e) {
-    if (e.name !== 'AbortError') toast('Fehler: ' + e.message, 'err');
+    if (e.name !== 'AbortError') toast('Fehler beim Verbinden: ' + e.message, 'err');
   }
 }
 
 function skipReconnect() {
-  document.getElementById('reconnectOverlay').classList.remove('active');
+  const banner = document.getElementById('reconnectBanner');
+  if (banner) banner.style.display = 'none';
   document.getElementById('appStatusDot').className = 'status-dot warn';
   document.getElementById('appStatusText').textContent = 'Kein Ordner';
-  toast('⚠ Ohne Ordner können keine Dokumente verarbeitet werden', 'warn');
 }
 
 function showScreen(id) {
@@ -861,22 +875,20 @@ async function finishSetup() {
 async function openFolder() {
   try {
     const handle = await window.showDirectoryPicker({mode:'readwrite'});
-    const saved = localStorage.getItem('ds_workspace_name');
-    if (saved && handle.name !== saved) {
-      if (!confirm('Ausgewählter Ordner "' + handle.name + '" unterscheidet sich vom gespeicherten "' + saved + '". Trotzdem verwenden?')) return;
-    }
+    // Kein Confirm – einfach verbinden
     workspaceHandle = handle;
     localStorage.setItem('ds_workspace_name', handle.name);
     eingangsHandle = await handle.getDirectoryHandle('_Eingang', {create:true});
-    // Kategorieordner anlegen falls nötig
     for (const kat of categories) {
       try { await handle.getDirectoryHandle(kat.folderName, {create:true}); } catch(e) {}
     }
+    const banner = document.getElementById('reconnectBanner');
+    if (banner) banner.style.display = 'none';
     const fi = document.getElementById('folderInfo');
     if (fi) fi.textContent = '✓ Verbunden: ' + handle.name;
     document.getElementById('appStatusDot').className = 'status-dot ok';
     document.getElementById('appStatusText').textContent = 'Bereit · ' + handle.name;
-    toast('✓ Ordner verbunden: ' + handle.name, 'ok');
+    toast('✓ Verbunden: ' + handle.name, 'ok');
     renderDashboard();
   } catch(e) {
     if (e.name !== 'AbortError') toast('Fehler: ' + e.message, 'err');
