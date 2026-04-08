@@ -291,10 +291,9 @@ nav {
   </a>
   <div class="nav-links">
     <a href="landing.html">Home</a>
-    <a href="#ablauf">Ablauf</a>
-    <a href="#einrichtung">Einrichtung</a>
-    <a href="#faq">FAQ</a>
-    <a href="agb.html">AGB & Datenschutz</a>
+    <a href="info.html">Anleitung</a>
+    <a href="agb.html">AGB &amp; Datenschutz</a>
+    <a href="index.html">App öffnen</a>
   </div>
   <a href="index.html" class="nav-cta">App öffnen →</a>
 </nav>
@@ -364,7 +363,7 @@ nav {
 <!-- EINRICHTUNG -->
 <section class="section" id="einrichtung" style="border-top: 1px solid var(--border);">
   <div class="section-label">Erste Schritte</div>
-  <div class="section-title">Einrichtung in 4 Schritten</div>
+  <div class="section-title">Anleitung in 4 Schritten</div>
   <div class="section-sub">Einmalig, dauert ca. 5 Minuten.</div>
 
   <div class="setup-steps">
@@ -374,9 +373,13 @@ nav {
       <div class="setup-step-body">
         <div class="setup-step-title">Lizenznummer eingeben</div>
         <div class="setup-step-desc">
-          Öffne die App und gib deine Lizenznummer ein. Das Format sieht so aus:
+          Öffne die App und gib deine persönliche Lizenznummer ein. Das Format sieht so aus:
         </div>
         <div class="setup-step-hint">XXXX-XXXX-XXXX-XXXX</div>
+        <div class="setup-step-desc" style="margin-top:10px;">
+          📩 <strong>Woher bekomme ich meine Lizenznummer?</strong><br>
+          Du erhältst deine persönliche Lizenznummer per E-Mail – entweder nach deiner Bewerbung als <a href="landing.html#beta" style="color:var(--accent);">Beta-Tester</a> oder nach dem Kauf einer Lizenz. Falls du noch keine hast, kannst du dich <a href="landing.html#beta" style="color:var(--accent);">hier als Beta-Tester bewerben</a> und erhältst 3 Monate kostenlos Zugang.
+        </div>
       </div>
     </div>
 
@@ -385,11 +388,14 @@ nav {
       <div class="setup-step-body">
         <div class="setup-step-title">Gemini API Key holen (kostenlos)</div>
         <div class="setup-step-desc">
-          Der API Key ist kostenlos und ermöglicht der KI deine Dokumente zu lesen. Er wird nur lokal auf deinem Gerät gespeichert und verlässt es nur für den Analyse-Call an Google.
+          Der API Key ermöglicht der KI deine Dokumente zu lesen und zu analysieren. Er ist für private Nutzung kostenlos, wird nur lokal auf deinem Gerät gespeichert und verlässt es ausschließlich für den Analyse-Call an Google.
         </div>
         <div class="setup-step-hint">
-          <a href="https://aistudio.google.com/app/apikey" target="_blank">→ aistudio.google.com/app/apikey</a><br>
+          <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">→ aistudio.google.com/app/apikey</a><br>
           „Create API Key" klicken → Key kopieren → in der App einfügen
+        </div>
+        <div class="setup-step-desc" style="margin-top:10px;">
+          📖 <a href="https://ai.google.dev/gemini-api/docs/api-key" target="_blank" rel="noopener" style="color:var(--accent);">Ausführliche Anleitung zur API-Key-Erstellung (Google Docs, englisch)</a>
         </div>
       </div>
     </div>
@@ -400,7 +406,7 @@ nav {
         <div class="setup-step-title">Arbeitsordner auswählen</div>
         <div class="setup-step-desc">
           Wähle einen Ordner auf deinem Gerät. Darin legt die App automatisch den Eingangsordner <strong>_Eingang</strong> und alle Kategorieordner an.<br><br>
-          <strong>Tipp:</strong> Google Drive, OneDrive oder Dropbox als lokaler Sync-Ordner funktionieren ebenfalls – deine Dokumente bleiben dann automatisch gesichert.
+          <strong>Tipp:</strong> Google Drive, OneDrive oder Dropbox können als <strong><u>lokaler Sync-Ordner</u></strong> verwendet werden – deine Dokumente bleiben dann automatisch in der Cloud gesichert, ohne dass du etwas extra tun musst.
         </div>
       </div>
     </div>
@@ -410,8 +416,8 @@ nav {
       <div class="setup-step-body">
         <div class="setup-step-title">Kategorien anlegen</div>
         <div class="setup-step-desc">
-          Lege deine persönlichen Kategorien an, z.B. Versicherungen, Arbeit, Wohnen, Steuer, Garantiebelege, Anleitungen. Die KI ordnet Dokumente nur diesen Kategorien zu – keine Überraschungen.<br><br>
-          <strong>Wichtig:</strong> Lege eine Kategorie namens <strong>„Steuer"</strong> an, wenn du möchtest dass steuerrelevante Dokumente automatisch eine Kopie dort erhalten.
+          Beim ersten Start sind bereits 5 Standardkategorien voreingestellt: Wohnen, Arbeit, Versicherungen, Bank & Finanzen und Steuer. Du kannst diese anpassen oder eigene hinzufügen.<br><br>
+          <strong>Wichtig:</strong> Die Kategorie <strong>„Steuer"</strong> ist als Sekundärordner markiert – steuerrelevante Dokumente werden automatisch zusätzlich dort abgelegt.
         </div>
       </div>
     </div>
@@ -419,7 +425,7 @@ nav {
   </div>
 
   <div style="margin-top: 24px; padding: 18px 22px; background: rgba(56,189,248,.06); border: 1px solid rgba(56,189,248,.2); border-radius: 12px; font-size: 14px; color: var(--text2);">
-    ℹ️ <strong style="color:var(--text);">Wichtig nach jedem Browser-Neustart:</strong> Die App benötigt aus Datenschutzgründen bei jedem Neustart eine erneute Bestätigung für den Ordnerzugriff. Klicke auf das 📁-Symbol oben rechts und wähle den Ordner nochmals aus.
+    ℹ️ <strong style="color:var(--text);">Wichtig nach jedem Browser-Neustart:</strong> Die App benötigt aus Datenschutzgründen bei jedem Neustart eine erneute Bestätigung für den Ordnerzugriff. Ein goldener Banner erscheint oben – einfach darauf klicken und denselben Ordner auswählen.
   </div>
 </section>
 
