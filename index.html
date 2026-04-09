@@ -626,40 +626,40 @@ const DEFAULT_CATEGORIES = [
   {
     name: 'Wohnen',
     folderName: 'Wohnen',
-    description: 'Dokumente rund um Wohnung und Haus: Mietvertrag, Nebenkosten, Strom, Gas, Wasser, Internet, Hausratversicherung, Handwerkerrechnungen',
-    keywords: 'Miete, Nebenkosten, Strom, Gas, Wasser, Internet, Hausrat, Handwerker, Heizung, Renovierung, Mietvertrag, Betriebskosten',
+    description: 'Dokumente rund um Wohnung und Haus: Mietvertrag, Nebenkostenabrechnung, Strom- und Gasrechnung, Wasserrechnung, Heizkosten, Hausratversicherung, Gebäudeversicherung, Handwerkerrechnungen, Renovierungskosten. NICHT hierher gehören: Internet/Telefon-Rechnungen (→ Telekommunikation), Arbeitskleidung, Einkäufe.',
+    keywords: 'Miete, Nebenkosten, Strom, Gas, Wasser, Hausrat, Handwerker, Heizung, Renovierung, Mietvertrag, Betriebskosten, Vermieter, Hausverwaltung',
     isSecondary: false,
     retentionYears: null
   },
   {
     name: 'Arbeit',
     folderName: 'Arbeit',
-    description: 'Berufliche Dokumente: Gehaltsabrechnungen, Arbeitsvertrag, Lohnsteuer, Sozialversicherung, Rentenversicherung, Arbeitsbescheinigungen',
-    keywords: 'Gehalt, Lohn, Gehaltsabrechnung, Arbeitsvertrag, Lohnsteuer, Sozialversicherung, Rentenversicherung, Arbeitsbescheinigung, Kündigung',
+    description: 'Berufliche Dokumente: Gehaltsabrechnungen, Lohnabrechnungen, Arbeitsvertrag, Kündigung, Arbeitsbescheinigungen, Sozialversicherungsnachweise, Rentenversicherung, Arbeitslosengeld, Weiterbildungskosten, Arbeitsschutzausrüstung (Sicherheitsschuhe, Schutzkleidung, Helm, Handschuhe), Dienstreisebelege, Fortbildungen. Auch: Rechnungen für Arbeitsmittel die beruflich genutzt werden.',
+    keywords: 'Gehalt, Lohn, Gehaltsabrechnung, Arbeitsvertrag, Sozialversicherung, Rentenversicherung, Arbeitsbescheinigung, Kündigung, Sicherheitsschuhe, Arbeitsschutz, Schutzkleidung, Berufskleidung, Dienstreise, Fortbildung, Weiterbildung',
     isSecondary: false,
     retentionYears: null
   },
   {
     name: 'Versicherungen',
     folderName: 'Versicherungen',
-    description: 'Alle Versicherungsdokumente: Kranken-, Haftpflicht-, KFZ-, Lebens-, Berufsunfähigkeitsversicherung, Policen, Beitragsbescheide',
-    keywords: 'Versicherung, Police, Beitrag, KFZ, Haftpflicht, Krankenversicherung, Lebensversicherung, Berufsunfähigkeit, Unfall',
+    description: 'Alle Versicherungsdokumente: Krankenversicherung, Haftpflichtversicherung, KFZ-Versicherung, Lebensversicherung, Berufsunfähigkeitsversicherung, Unfallversicherung, Rechtsschutzversicherung. Dazu: Policen, Versicherungsscheine, Beitragsbescheide, Schadensmeldungen, Beitragsrechnungen.',
+    keywords: 'Versicherung, Police, Beitrag, KFZ, Haftpflicht, Krankenversicherung, Lebensversicherung, Berufsunfähigkeit, Unfall, Rechtsschutz, Versicherungsschein',
     isSecondary: false,
     retentionYears: null
   },
   {
     name: 'Bank & Finanzen',
     folderName: 'Bank',
-    description: 'Kontoauszüge, Kreditverträge, Sparpläne, Investmentdepots, Steuerbescheide zur Kapitalertragsteuer, Bankkorrespondenz',
-    keywords: 'Kontoauszug, Kreditvertrag, Depot, Investmentfonds, Aktien, ETF, Sparbuch, Überweisung, Darlehen, Hypothek',
+    description: 'Bankdokumente und Finanzunterlagen: Kontoauszüge, Kreditverträge, Darlehensverträge, Hypotheken, Sparpläne, Investmentdepots, Wertpapiernachweise, ETF- und Fondsabrechnungen, Steuerbescheide zur Kapitalertragsteuer, Bankkorrespondenz, Mahnungen von Banken.',
+    keywords: 'Kontoauszug, Kreditvertrag, Depot, Investmentfonds, Aktien, ETF, Sparbuch, Überweisung, Darlehen, Hypothek, Zinsen, Bank, Sparkasse',
     isSecondary: false,
     retentionYears: null
   },
   {
     name: 'Steuer',
     folderName: 'Steuer',
-    description: 'Alle Dokumente die für die jährliche Steuererklärung relevant sind: Spendenquittungen, Handwerkerrechnungen, Werbungskosten, Riester, Vorsorgeaufwendungen',
-    keywords: 'Steuererklärung, Finanzamt, Steuerbescheid, Spendenquittung, Werbungskosten, Riester, Sonderausgaben, Handwerkerrechnung steuerlich',
+    description: 'SEKUNDÄRORDNER – erhält automatisch Kopien steuerrelevanter Belege aus anderen Kategorien. Direkt ablegen: Steuerbescheide vom Finanzamt, Steuererklärungen, Spendenquittungen, Riester-Bescheinigungen, Vorsorgeaufwendungen, Jahressteuerbescheinigungen der Bank.',
+    keywords: 'Steuererklärung, Finanzamt, Steuerbescheid, Spendenquittung, Werbungskosten, Riester, Sonderausgaben, Jahressteuerbescheinigung, Vorsorgeaufwendungen',
     isSecondary: true,
     retentionYears: 10
   }
@@ -694,6 +694,15 @@ if (!categories || categories.length === 0) {
     if (typeof k.retentionYears === 'undefined') { k.retentionYears = null; migrated = true; }
     // Steuer-Kategorie automatisch als Sekundärordner markieren wenn noch nicht gesetzt
     if (k.name.toLowerCase() === 'steuer' && !k.isSecondary) { k.isSecondary = true; migrated = true; }
+    // Beschreibung aus DEFAULT_CATEGORIES übernehmen wenn noch leer
+    if (!k.description) {
+      const def = DEFAULT_CATEGORIES.find(d => d.name === k.name);
+      if (def && def.description) { k.description = def.description; migrated = true; }
+    }
+    if (!k.keywords) {
+      const def = DEFAULT_CATEGORIES.find(d => d.name === k.name);
+      if (def && def.keywords) { k.keywords = def.keywords; migrated = true; }
+    }
     return k;
   });
   if (migrated) {
@@ -1479,21 +1488,62 @@ function renderKategorien() {
     if (k.isSecondary) badges.push('<span class="kat-badge kat-badge-secondary">📋 Sekundärordner</span>');
     if (k.retentionYears) badges.push('<span class="kat-badge kat-badge-retention">🕐 ' + k.retentionYears + ' Jahre Aufbewahrung</span>');
 
-    return '<div class="kat-card">' +
+    return '<div class="kat-card" id="katcard-' + i + '">' +
       '<div class="kat-card-header">' +
         '<div>' +
           '<div class="kat-card-name">📁 ' + esc(k.name) + '</div>' +
           (badges.length > 0 ? '<div class="kat-card-badges">' + badges.join('') + '</div>' : '') +
         '</div>' +
         '<div class="kat-actions">' +
+          '<button class="btn btn-ghost btn-sm" onclick="toggleKatEdit(' + i + ')">✏️ Bearbeiten</button>' +
           '<button class="btn btn-danger btn-sm" onclick="deleteKategorie(' + i + ')">Entfernen</button>' +
         '</div>' +
       '</div>' +
       '<div class="kat-folder-path">📂 ' + esc(k.folderName) + '</div>' +
-      (k.description ? '<div class="kat-description">' + esc(k.description) + '</div>' : '') +
-      (k.keywords ? '<div class="kat-keywords">🔑 ' + esc(k.keywords) + '</div>' : '') +
+      // Ansichtsmodus
+      '<div id="katview-' + i + '">' +
+        (k.description
+          ? '<div class="kat-description">' + esc(k.description) + '</div>'
+          : '<div class="kat-description" style="color:var(--text3);font-style:italic;">Keine Beschreibung – KI erhält weniger Kontext für diese Kategorie.</div>') +
+        (k.keywords ? '<div class="kat-keywords">🔑 ' + esc(k.keywords) + '</div>' : '') +
+      '</div>' +
+      // Editiermodus (zunächst ausgeblendet)
+      '<div id="katedit-' + i + '" style="display:none;margin-top:12px;">' +
+        '<div class="fg" style="margin-bottom:10px;">' +
+          '<label>Beschreibung (für KI-Erkennung)</label>' +
+          '<textarea id="katedit-desc-' + i + '" rows="4" style="background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:10px 13px;color:#f0ebe5;font-family:var(--mono);font-size:13px;outline:none;width:100%;resize:vertical;">' + esc(k.description||'') + '</textarea>' +
+        '</div>' +
+        '<div class="fg" style="margin-bottom:10px;">' +
+          '<label>Schlüsselwörter (kommasepariert)</label>' +
+          '<input id="katedit-kw-' + i + '" type="text" value="' + esc(k.keywords||'') + '" style="background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:10px 13px;color:#f0ebe5;font-family:var(--mono);font-size:13px;outline:none;width:100%;">' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;">' +
+          '<button class="btn btn-success btn-sm" onclick="saveKatEdit(' + i + ')">✓ Speichern</button>' +
+          '<button class="btn btn-ghost btn-sm" onclick="toggleKatEdit(' + i + ')">Abbrechen</button>' +
+        '</div>' +
+      '</div>' +
     '</div>';
   }).join('');
+}
+
+function toggleKatEdit(i) {
+  const view = document.getElementById('katview-' + i);
+  const edit = document.getElementById('katedit-' + i);
+  if (!view || !edit) return;
+  const isOpen = edit.style.display !== 'none';
+  view.style.display = isOpen ? '' : 'none';
+  edit.style.display = isOpen ? 'none' : 'block';
+}
+
+function saveKatEdit(i) {
+  const desc = (document.getElementById('katedit-desc-' + i)?.value || '').trim();
+  const kw   = (document.getElementById('katedit-kw-' + i)?.value || '').trim();
+  if (!categories[i]) return;
+  categories[i].description = desc;
+  categories[i].keywords = kw;
+  saveState();
+  renderKategorien();
+  toast('✓ Beschreibung gespeichert', 'ok');
 }
 
 function toggleAddKat() {
@@ -1675,11 +1725,13 @@ function renderDashboard() {
       recentEl.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:8px 0;">Noch keine Dokumente verarbeitet</div>';
     } else {
       const recent = log.slice(0,5);
-      recentEl.innerHTML = recent.map(l =>
+      recentEl.innerHTML = recent.map((l,idx) =>
         '<div class="dash-log-row">' +
-        '<span class="dash-log-name" title="' + esc(l.newName||'') + '">' + esc(l.newName||'–') + '</span>' +
+        '<div style="flex:1;min-width:0;">' +
+          '<span class="dash-log-name dash-log-link" title="Klicken zum Öffnen" onclick="openRecentFile(' + idx + ')" style="cursor:pointer;text-decoration:underline;text-underline-offset:2px;color:var(--accent-light);">' + esc(l.newName||'–') + '</span>' +
+          '<div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:2px;">📂 ' + esc(l.kategorie||'–') + '</div>' +
+        '</div>' +
         '<span style="display:flex;gap:8px;align-items:center;flex-shrink:0;">' +
-          '<span style="font-size:11px;color:var(--text3);font-family:var(--mono);">' + esc(l.kategorie||'–') + '</span>' +
           '<span class="tag ' + (l.typ==='Manuell'?'tag-manual':'tag-auto') + '">' + esc(l.typ||'–') + '</span>' +
         '</span>' +
         '</div>'
@@ -1701,32 +1753,65 @@ function renderDashboard() {
   }
 }
 
-// ══════════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════════
+async function openRecentFile(logIdx) {
+  const entry = log[logIdx];
+  if (!entry || !entry.newName || !entry.kategorie) { toast('Keine Dateiinfo vorhanden', 'warn'); return; }
+  if (!workspaceHandle) { toast('Bitte zuerst Ordner verbinden', 'warn'); return; }
+
+  // Kategorie-Ordnernamen ermitteln
+  const kat = categories.find(k => k.name === entry.kategorie);
+  const folderName = kat ? kat.folderName : entry.kategorie;
+
+  try {
+    const folder = await workspaceHandle.getDirectoryHandle(folderName, {create:false});
+    const fileHandle = await folder.getFileHandle(entry.newName, {create:false});
+    const file = await fileHandle.getFile();
+    const url = URL.createObjectURL(file);
+
+    // Im Browser öffnen
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.click();
+
+    // Pfad anzeigen
+    const pfad = (workspaceHandle.name || '?') + ' / ' + folderName + ' / ' + entry.newName;
+    toast('📂 ' + pfad, 'info');
+
+    // URL nach kurzer Zeit freigeben
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+  } catch(e) {
+    if (e.name === 'NotFoundError') {
+      toast('Datei nicht gefunden: ' + entry.newName + ' – möglicherweise verschoben oder gelöscht.', 'warn');
+    } else {
+      toast('Fehler beim Öffnen: ' + e.message, 'err');
+    }
+  }
+}
+
+
 function buildPrompt(cats) {
   // Kategoriebeschreibungen für Gemini aufbereiten
   const katDetails = cats.map(k => {
-    let detail = '- ' + k.name;
-    if (k.description) detail += ': ' + k.description;
-    if (k.keywords) detail += ' [Schlüsselwörter: ' + k.keywords + ']';
-    if (k.isSecondary) detail += ' [SEKUNDÄRORDNER – erhält Kopien wenn steuerrelevant oder kriterienzutreffend]';
+    let detail = '- ' + k.name + ':\n';
+    if (k.description) detail += '  Beschreibung: ' + k.description + '\n';
+    if (k.keywords) detail += '  Schlüsselwörter: ' + k.keywords + '\n';
+    if (k.isSecondary) detail += '  [SEKUNDÄRORDNER – erhält Kopien wenn steuerrelevant]\n';
     return detail;
   }).join('\n');
 
-  const katNamen = cats.map(k => k.name);
-
   return 'Du bist ein Dokumenten-Kategorisierungsassistent für deutsche Privatunterlagen.\n\n' +
-    'Verfügbare Kategorien (NUR diese verwenden):\n' +
-    (katDetails || 'keine – kategorie leer lassen') + '\n\n' +
+    'Verfügbare Kategorien (NUR diese verwenden, EXAKT so wie angegeben):\n\n' +
+    (katDetails || 'keine – kategorie leer lassen') + '\n' +
     'Namenskonvention: YYYYMMDD_Kategorie_Art_Dokumenttyp_Person\n\n' +
     'Felder:\n' +
-    '- kategorie: EXAKT ein Name aus der obigen Liste oder leer wenn keine passt\n' +
-    '- art: Unterkategorie (KFZ, Leben, Haftpflicht, Strom, Wasser, Gehalt, Kranken usw.)\n' +
+    '- kategorie: EXAKT ein Name aus der obigen Liste oder leer wenn keine passt. Wähle die Kategorie anhand der Beschreibung, nicht nur am Namen.\n' +
+    '- art: Unterkategorie passend zum Dokument (z.B. KFZ, Leben, Haftpflicht, Strom, Wasser, Gehalt, Kranken, Sicherheitsschuhe, Arbeitsschutz, Internet, Telefon, Miete usw.)\n' +
     '- dokumenttyp: Rechnung, Versicherungsschein, Mahnung, Vertrag, Bescheid, Kontoauszug, Quittung, Garantiebeleg, Anleitung, Gehaltsabrechnung\n' +
-    '- person: Empfänger oder Absender falls erkennbar; sonst leer\n' +
+    '- person: NUR Vorname + erster Buchstabe des Nachnamens zusammen ohne Leerzeichen oder Unterstrich. Beispiel: "Volker Moos" → "VolkerM". Leer lassen wenn keine Person erkennbar.\n' +
     '- datum: Belegdatum (YYYYMMDD) – NICHT heute – aus dem Dokument lesen\n' +
-    '- steuer_relevant: true wenn das Dokument für die Steuererklärung relevant ist\n' +
+    '- steuer_relevant: true wenn das Dokument für die Steuererklärung relevant ist (z.B. Arbeitsmittel, Handwerkerrechnungen, Spendenquittungen, Berufskleidung, Arbeitsschutz)\n' +
     '- konfidenz: 0–100 (wie sicher bist du mit der Kategorisierung)\n' +
     '- unklar_grund: Begründung wenn konfidenz < 70 oder keine Kategorie passt\n\n' +
     'Regeln: Nur ASCII + Bindestrich in Textfeldern. Keine neue Kategorie erfinden. Wenn keine Kategorie passt, kategorie leer lassen und konfidenz niedrig setzen.\n\n' +
