@@ -434,6 +434,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14
         </div>
         <div class="dash-section" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
           <div>
+            <div style="font-size:13px;font-weight:700;color:#b0c4d8;margin-bottom:4px;">🗂 Belege-Check</div>
+            <div style="font-size:12px;color:#4d6a80;line-height:1.5;">Zeigt alle Belege älter als 4 Jahre – zum Prüfen ob löschen oder behalten.</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="belegeCheck()">Belege prüfen →</button>
+        </div>
+        <div class="dash-section" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+          <div>
             <div style="font-size:14px;font-weight:700;color:#f0ebe5;margin-bottom:6px;">Nutzungsmodus: <span class="privat-badge">🔒 Privat</span></div>
             <div style="font-size:13px;color:#4d6a80;line-height:1.6;">Für buchhalterische Ablage mit GoBD-konformen Aufbewahrungsfristen und Buchhaltungskategorien:</div>
           </div>
@@ -626,42 +633,58 @@ const DEFAULT_CATEGORIES = [
   {
     name: 'Wohnen',
     folderName: 'Wohnen',
-    description: 'Dokumente rund um Wohnung und Haus: Mietvertrag, Nebenkostenabrechnung, Strom- und Gasrechnung, Wasserrechnung, Heizkosten, Hausratversicherung, Gebäudeversicherung, Handwerkerrechnungen, Renovierungskosten. NICHT hierher gehören: Internet/Telefon-Rechnungen (→ Telekommunikation), Arbeitskleidung, Einkäufe.',
-    keywords: 'Miete, Nebenkosten, Strom, Gas, Wasser, Hausrat, Handwerker, Heizung, Renovierung, Mietvertrag, Betriebskosten, Vermieter, Hausverwaltung',
+    description: 'Dokumente rund um Wohnung und Haus: Mietvertrag, Nebenkostenabrechnung, Strom, Gas, Wasser, Heizkosten, Handwerkerrechnungen, Renovierungskosten, Grundsteuer, Hausgeld. Auch alle laufenden Haushaltsnebenkosten: Telefon, Internet, TV/Kabel, Müllgebühren, Schornsteinfeger. NICHT hierher gehören: Versicherungen (auch Hausrat, Gebäude → Versicherungen), Geräte-Kaufbelege (→ Belege).',
+    keywords: 'Miete, Nebenkosten, Strom, Gas, Wasser, Heizung, Renovierung, Mietvertrag, Betriebskosten, Vermieter, Hausverwaltung, Telefon, Internet, TV, Kabel, Müll, Schornsteinfeger, Grundsteuer',
     isSecondary: false,
     retentionYears: null
   },
   {
     name: 'Arbeit',
     folderName: 'Arbeit',
-    description: 'Berufliche Dokumente: Gehaltsabrechnungen, Lohnabrechnungen, Arbeitsvertrag, Kündigung, Arbeitsbescheinigungen, Sozialversicherungsnachweise, Rentenversicherung, Arbeitslosengeld, Weiterbildungskosten, Arbeitsschutzausrüstung (Sicherheitsschuhe, Schutzkleidung, Helm, Handschuhe), Dienstreisebelege, Fortbildungen. Auch: Rechnungen für Arbeitsmittel die beruflich genutzt werden.',
-    keywords: 'Gehalt, Lohn, Gehaltsabrechnung, Arbeitsvertrag, Sozialversicherung, Rentenversicherung, Arbeitsbescheinigung, Kündigung, Sicherheitsschuhe, Arbeitsschutz, Schutzkleidung, Berufskleidung, Dienstreise, Fortbildung, Weiterbildung',
+    description: 'Ausschließlich arbeitsrechtliche und lohnbezogene Dokumente: Gehaltsabrechnungen, Lohnabrechnungen, Arbeitsvertrag, Kündigung, Arbeitsbescheinigungen, Sozialversicherungsnachweise, Arbeitslosengeld-Bescheide, Elterngeld, Zeugnisse. NICHT hierher gehören: Versicherungen (→ Versicherungen), Schutzkleidung/Arbeitsmittel/Werkzeug (→ Belege, steuerlich markieren), Fortbildungsrechnungen (→ Belege, steuerlich markieren).',
+    keywords: 'Gehalt, Lohn, Gehaltsabrechnung, Arbeitsvertrag, Sozialversicherung, Rentenversicherung, Arbeitsbescheinigung, Kündigung, Arbeitslosengeld, Elterngeld, Zeugnis, Lohnsteuer',
     isSecondary: false,
     retentionYears: null
   },
   {
     name: 'Versicherungen',
     folderName: 'Versicherungen',
-    description: 'Alle Versicherungsdokumente: Krankenversicherung, Haftpflichtversicherung, KFZ-Versicherung, Lebensversicherung, Berufsunfähigkeitsversicherung, Unfallversicherung, Rechtsschutzversicherung. Dazu: Policen, Versicherungsscheine, Beitragsbescheide, Schadensmeldungen, Beitragsrechnungen.',
-    keywords: 'Versicherung, Police, Beitrag, KFZ, Haftpflicht, Krankenversicherung, Lebensversicherung, Berufsunfähigkeit, Unfall, Rechtsschutz, Versicherungsschein',
+    description: 'ALLE Versicherungen ohne Ausnahme – auch wenn sie zu Haus, Auto oder Arbeit gehören: Krankenversicherung, Haftpflicht, KFZ-Versicherung, Hausratversicherung, Gebäudeversicherung, Lebensversicherung, Berufsunfähigkeit, Unfallversicherung, Rechtsschutz, Rentenversicherung, Riester, Rürup, Zahnzusatz, Reiseversicherung. Dokumenttypen: Police, Versicherungsschein, AGB, Beitragsrechnung, Beitragsbescheid, Schadensmeldung, Schreiben des Versicherers. Beitragsrechnungen auf Steuerrelevanz prüfen (Kranken, Pflege, Rente, Riester → oft steuerlich absetzbar).',
+    keywords: 'Versicherung, Police, Beitrag, KFZ, Haftpflicht, Krankenversicherung, Lebensversicherung, Berufsunfähigkeit, Unfall, Rechtsschutz, Versicherungsschein, AGB, Hausrat, Gebäude, Rente, Riester, Rürup, Zahnzusatz, Reiseversicherung',
     isSecondary: false,
     retentionYears: null
   },
   {
     name: 'Bank & Finanzen',
     folderName: 'Bank',
-    description: 'Bankdokumente und Finanzunterlagen: Kontoauszüge, Kreditverträge, Darlehensverträge, Hypotheken, Sparpläne, Investmentdepots, Wertpapiernachweise, ETF- und Fondsabrechnungen, Steuerbescheide zur Kapitalertragsteuer, Bankkorrespondenz, Mahnungen von Banken.',
-    keywords: 'Kontoauszug, Kreditvertrag, Depot, Investmentfonds, Aktien, ETF, Sparbuch, Überweisung, Darlehen, Hypothek, Zinsen, Bank, Sparkasse',
+    description: 'Bankdokumente und Finanzunterlagen: Kontoauszüge, Kreditverträge, Darlehensverträge, Hypotheken, Sparpläne, Investmentdepots, Wertpapiernachweise, ETF- und Fondsabrechnungen, Jahressteuerbescheinigungen der Bank, Kapitalertragsteuer-Bescheide, Bankkorrespondenz, Mahnungen von Banken.',
+    keywords: 'Kontoauszug, Kreditvertrag, Depot, Investmentfonds, Aktien, ETF, Sparbuch, Überweisung, Darlehen, Hypothek, Zinsen, Bank, Sparkasse, Jahressteuerbescheinigung',
     isSecondary: false,
     retentionYears: null
   },
   {
     name: 'Steuer',
     folderName: 'Steuer',
-    description: 'SEKUNDÄRORDNER – erhält automatisch Kopien steuerrelevanter Belege aus anderen Kategorien. Direkt ablegen: Steuerbescheide vom Finanzamt, Steuererklärungen, Spendenquittungen, Riester-Bescheinigungen, Vorsorgeaufwendungen, Jahressteuerbescheinigungen der Bank.',
-    keywords: 'Steuererklärung, Finanzamt, Steuerbescheid, Spendenquittung, Werbungskosten, Riester, Sonderausgaben, Jahressteuerbescheinigung, Vorsorgeaufwendungen',
+    description: 'SEKUNDÄRORDNER – erhält automatisch Kopien aller steuerrelevanten Belege aus anderen Kategorien. Direkt ablegen: Steuerbescheide vom Finanzamt, Steuererklärungen, Spendenquittungen. Als steuerrelevant gilt: Versicherungsbeiträge (Kranken, Pflege, Rente, Riester), Handwerkerrechnungen, Arbeitsmittel, Schutzkleidung, Fortbildungen, Dienstreisen, Spenden, haushaltsnahe Dienstleistungen.',
+    keywords: 'Steuererklärung, Finanzamt, Steuerbescheid, Spendenquittung, Werbungskosten, Riester, Sonderausgaben, Vorsorgeaufwendungen, haushaltsnahe Dienstleistungen',
     isSecondary: true,
     retentionYears: 10
+  },
+  {
+    name: 'Belege',
+    folderName: 'Belege',
+    description: 'Kaufbelege, Quittungen und Rechnungen mit möglicher Garantierelevanz: Elektronik, Haushaltsgeräte, Möbel, Werkzeug, Fahrrad, Sportgeräte. Auch: Schutzkleidung, Sicherheitsschuhe, Arbeitsmittel (wenn unklar ob privat oder beruflich genutzt – steuerlich markieren). Alles was nicht eindeutig in eine andere Kategorie passt. Belege älter als 4 Jahre regelmäßig prüfen (Knopf: Belege-Check). Keine Anleitungen (→ Anleitungen), keine Versicherungen (→ Versicherungen).',
+    keywords: 'Kaufbeleg, Quittung, Rechnung, Garantie, Gewährleistung, Elektronik, Haushaltsgerät, Möbel, Werkzeug, Fahrrad, Sportgerät, Sicherheitsschuhe, Schutzkleidung, Arbeitsmittel, Fortbildung',
+    isSecondary: false,
+    retentionYears: 4
+  },
+  {
+    name: 'Anleitungen',
+    folderName: 'Anleitungen',
+    description: 'Gebrauchs- und Bedienungsanleitungen für alle Geräte und Gegenstände: Elektrogeräte, Haushaltsgeräte, Heizung, Werkzeug, Fahrzeuge, Smart-Home, Software-Handbücher. Keine Kaufbelege oder Garantiescheine (→ Belege).',
+    keywords: 'Anleitung, Bedienungsanleitung, Gebrauchsanweisung, Handbuch, Manual, Betriebsanleitung, Installationsanleitung',
+    isSecondary: false,
+    retentionYears: null
   }
 ];
 
@@ -694,17 +717,24 @@ if (!categories || categories.length === 0) {
     if (typeof k.retentionYears === 'undefined') { k.retentionYears = null; migrated = true; }
     // Steuer-Kategorie automatisch als Sekundärordner markieren wenn noch nicht gesetzt
     if (k.name.toLowerCase() === 'steuer' && !k.isSecondary) { k.isSecondary = true; migrated = true; }
-    // Beschreibung aus DEFAULT_CATEGORIES übernehmen wenn noch leer
-    if (!k.description) {
-      const def = DEFAULT_CATEGORIES.find(d => d.name === k.name);
-      if (def && def.description) { k.description = def.description; migrated = true; }
-    }
-    if (!k.keywords) {
-      const def = DEFAULT_CATEGORIES.find(d => d.name === k.name);
-      if (def && def.keywords) { k.keywords = def.keywords; migrated = true; }
+    // Beschreibung + Keywords aus DEFAULT_CATEGORIES übernehmen wenn noch leer oder veraltet
+    const def = DEFAULT_CATEGORIES.find(d => d.name === k.name);
+    if (def) {
+      if (!k.description || k.description.length < 50) { k.description = def.description; migrated = true; }
+      if (!k.keywords) { k.keywords = def.keywords; migrated = true; }
+      if (typeof k.retentionYears === 'undefined' || k.retentionYears === null) {
+        if (def.retentionYears) { k.retentionYears = def.retentionYears; migrated = true; }
+      }
     }
     return k;
   });
+  // Neue Standard-Kategorien ergänzen wenn noch nicht vorhanden
+  for (const def of DEFAULT_CATEGORIES) {
+    if (!categories.find(k => k.name === def.name)) {
+      categories.push({...def});
+      migrated = true;
+    }
+  }
   if (migrated) {
     try { localStorage.setItem('ds_categories', JSON.stringify(categories)); } catch(e) {}
   }
@@ -1753,7 +1783,90 @@ function renderDashboard() {
   }
 }
 
-async function openRecentFile(logIdx) {
+async function belegeCheck() {
+  const vierJahreAgo = new Date();
+  vierJahreAgo.setFullYear(vierJahreAgo.getFullYear() - 4);
+  const grenze = vierJahreAgo.getFullYear() * 10000 +
+    (vierJahreAgo.getMonth() + 1) * 100 +
+    vierJahreAgo.getDate();
+
+  // Alle Belege-Einträge aus dem Log die älter als 4 Jahre sind
+  const alte = log.filter(l => {
+    if ((l.kategorie || '').toLowerCase() !== 'belege') return false;
+    const d = parseInt(l.datum || '0');
+    return d > 0 && d < grenze;
+  });
+
+  if (alte.length === 0) {
+    toast('✅ Keine Belege älter als 4 Jahre gefunden.', 'ok');
+    return;
+  }
+
+  // Overlay aufbauen
+  let html = '<div style="position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(4px);z-index:600;display:flex;align-items:center;justify-content:center;" id="belegeCheckOverlay">' +
+    '<div style="background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:28px 30px;width:620px;max-width:96vw;max-height:85vh;overflow-y:auto;">' +
+    '<div style="font-size:16px;font-weight:700;margin-bottom:4px;">🗂 Belege-Check</div>' +
+    '<div style="font-size:13px;color:var(--text3);margin-bottom:20px;">Folgende Belege sind älter als 4 Jahre. Bitte einzeln entscheiden:</div>';
+
+  alte.forEach((l, idx) => {
+    html += '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;">' +
+      '<div style="font-family:var(--mono);font-size:12px;color:var(--accent-light);margin-bottom:4px;">' + esc(l.newName || l.origName || '–') + '</div>' +
+      '<div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Datum: ' + esc(l.datum || '–') + '</div>' +
+      '<div style="display:flex;gap:8px;">' +
+        '<button class="btn btn-ghost btn-sm" onclick="belegeCheckBehalten(' + idx + ')">📁 Behalten</button>' +
+        '<button class="btn btn-danger btn-sm" onclick="belegeCheckLoeschen(' + idx + ')">🗑 Löschen</button>' +
+      '</div>' +
+    '</div>';
+  });
+
+  html += '<div style="display:flex;justify-content:flex-end;margin-top:16px;">' +
+    '<button class="btn btn-ghost" onclick="document.getElementById(\'belegeCheckOverlay\').remove()">Schließen</button>' +
+    '</div></div></div>';
+
+  // Daten temporär speichern für Callback
+  window._belegeCheckItems = alte;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function belegeCheckBehalten(idx) {
+  toast('📁 Beleg wird behalten.', 'info');
+  // Eintrag aus Overlay entfernen
+  const overlay = document.getElementById('belegeCheckOverlay');
+  if (overlay) {
+    const cards = overlay.querySelectorAll('[style*="background:var(--surface2)"]');
+    if (cards[idx]) cards[idx].remove();
+  }
+}
+
+async function belegeCheckLoeschen(idx) {
+  const item = (window._belegeCheckItems || [])[idx];
+  if (!item) return;
+
+  if (!workspaceHandle) { toast('Bitte zuerst Ordner verbinden', 'warn'); return; }
+  if (!confirm('Datei "' + (item.newName || item.origName) + '" wirklich löschen?\n\nDieser Vorgang kann nicht rückgängig gemacht werden.')) return;
+
+  try {
+    const kat = categories.find(k => k.name === item.kategorie);
+    const folderName = kat ? kat.folderName : item.kategorie;
+    const folder = await workspaceHandle.getDirectoryHandle(folderName, {create:false});
+    await folder.removeEntry(item.newName || item.origName);
+    // Aus Log entfernen
+    const logIdx = log.indexOf(item);
+    if (logIdx > -1) log.splice(logIdx, 1);
+    saveState();
+    toast('🗑 Gelöscht: ' + (item.newName || item.origName), 'ok');
+    // Karte aus Overlay entfernen
+    const overlay = document.getElementById('belegeCheckOverlay');
+    if (overlay) {
+      const cards = overlay.querySelectorAll('[style*="background:var(--surface2)"]');
+      if (cards[idx]) cards[idx].remove();
+    }
+  } catch(e) {
+    toast('Fehler beim Löschen: ' + e.message, 'err');
+  }
+}
+
+
   const entry = log[logIdx];
   if (!entry || !entry.newName || !entry.kategorie) { toast('Keine Dateiinfo vorhanden', 'warn'); return; }
   if (!workspaceHandle) { toast('Bitte zuerst Ordner verbinden', 'warn'); return; }
@@ -1792,7 +1905,6 @@ async function openRecentFile(logIdx) {
 
 
 function buildPrompt(cats) {
-  // Kategoriebeschreibungen für Gemini aufbereiten
   const katDetails = cats.map(k => {
     let detail = '- ' + k.name + ':\n';
     if (k.description) detail += '  Beschreibung: ' + k.description + '\n';
@@ -1804,17 +1916,27 @@ function buildPrompt(cats) {
   return 'Du bist ein Dokumenten-Kategorisierungsassistent für deutsche Privatunterlagen.\n\n' +
     'Verfügbare Kategorien (NUR diese verwenden, EXAKT so wie angegeben):\n\n' +
     (katDetails || 'keine – kategorie leer lassen') + '\n' +
-    'Namenskonvention: YYYYMMDD_Kategorie_Art_Dokumenttyp_Person\n\n' +
+    'PRIORITÄTSREIHENFOLGE bei Mehrfachzuordnung (oberste Priorität zuerst):\n' +
+    '1. Versicherungen – wenn irgendein Versicherungsbezug erkennbar ist (auch Hausrat, Gebäude, KFZ, Rente)\n' +
+    '2. Bank & Finanzen – wenn Bankbezug erkennbar ist\n' +
+    '3. Belege – wenn Kaufbeleg, Garantie, Arbeitsmittel, Schutzkleidung oder kein anderer klarer Bezug\n' +
+    '4. Arbeit – nur wenn eindeutig arbeitsrechtlicher oder lohnbezogener Inhalt (Gehaltsabrechnung, Arbeitsvertrag, Bescheinigung)\n' +
+    '5. Wohnen, Anleitungen – wenn klar zuordenbar\n\n' +
+    'SONDERREGELN:\n' +
+    '- Schutzkleidung, Sicherheitsschuhe, Arbeitsmittel, Werkzeug, Fortbildungen → Kategorie: Belege; steuer_relevant=true\n' +
+    '- Versicherungsbeiträge Kranken/Pflege/Rente/Riester/Rürup → steuer_relevant=true\n' +
+    '- Handwerkerrechnungen, haushaltsnahe Dienstleistungen → steuer_relevant=true\n' +
+    '- Anleitungen/Bedienungsanleitungen → immer Kategorie: Anleitungen\n\n' +
     'Felder:\n' +
-    '- kategorie: EXAKT ein Name aus der obigen Liste oder leer wenn keine passt. Wähle die Kategorie anhand der Beschreibung, nicht nur am Namen.\n' +
-    '- art: Unterkategorie passend zum Dokument (z.B. KFZ, Leben, Haftpflicht, Strom, Wasser, Gehalt, Kranken, Sicherheitsschuhe, Arbeitsschutz, Internet, Telefon, Miete usw.)\n' +
-    '- dokumenttyp: Rechnung, Versicherungsschein, Mahnung, Vertrag, Bescheid, Kontoauszug, Quittung, Garantiebeleg, Anleitung, Gehaltsabrechnung\n' +
-    '- person: NUR Vorname + erster Buchstabe des Nachnamens zusammen ohne Leerzeichen oder Unterstrich. Beispiel: "Volker Moos" → "VolkerM". Leer lassen wenn keine Person erkennbar.\n' +
+    '- kategorie: EXAKT ein Name aus der obigen Liste oder leer wenn keine passt\n' +
+    '- art: Unterkategorie passend zum Dokument (z.B. KFZ, Kranken, Hausrat, Strom, Gehalt, Sicherheitsschuhe, Elektronik usw.)\n' +
+    '- dokumenttyp: Rechnung, Versicherungsschein, Police, AGB, Mahnung, Vertrag, Bescheid, Kontoauszug, Quittung, Garantiebeleg, Anleitung, Gehaltsabrechnung, Schadensmeldung\n' +
+    '- person: NUR Vorname + erster Buchstabe des Nachnamens ohne Leerzeichen/Unterstrich. Beispiel: "Volker Moos" → "VolkerM". Leer lassen wenn keine Person erkennbar.\n' +
     '- datum: Belegdatum (YYYYMMDD) – NICHT heute – aus dem Dokument lesen\n' +
-    '- steuer_relevant: true wenn das Dokument für die Steuererklärung relevant ist (z.B. Arbeitsmittel, Handwerkerrechnungen, Spendenquittungen, Berufskleidung, Arbeitsschutz)\n' +
-    '- konfidenz: 0–100 (wie sicher bist du mit der Kategorisierung)\n' +
+    '- steuer_relevant: true wenn das Dokument für die Steuererklärung relevant ist oder sein könnte\n' +
+    '- konfidenz: 0–100\n' +
     '- unklar_grund: Begründung wenn konfidenz < 70 oder keine Kategorie passt\n\n' +
-    'Regeln: Nur ASCII + Bindestrich in Textfeldern. Keine neue Kategorie erfinden. Wenn keine Kategorie passt, kategorie leer lassen und konfidenz niedrig setzen.\n\n' +
+    'Regeln: Nur ASCII + Bindestrich in Textfeldern. Keine neue Kategorie erfinden.\n\n' +
     'Antworte NUR mit diesem JSON – kein Kommentar, kein Markdown:\n' +
     '{"kategorie":"","art":"","dokumenttyp":"","person":"","datum":"","steuer_relevant":false,"konfidenz":0,"unklar_grund":""}';
 }
